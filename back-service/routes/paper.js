@@ -13,28 +13,62 @@ router.get('/', async (ctx, next) => {
 router.post('/create', async (ctx, next) => {
   const params = ctx.request.body
   params.account = ctx.account
-  let flag = false 
-  while(!flag) {
-  	// 创建id
-  	params.paperId = Date.now()
-  	flag = await db.isExist(params, 'paper', 'paperId')
-  }
 
-  params.createdDate = moment().format('YYYY-MM-DD HH:mm:ss')
-  console.log('插入的数据：', params)
-
-  // 插入数据库
-  if(db.insert(params, 'paper')) {
-  	ctx.body = {
-  	  code: 20000,
-  	  message: '创建试卷成功',
-  	  paperId: params.paperId
-  	}	
+  if (params.paperId) {
+    // 如果已经存在此试卷，则更改试卷信息
+    const paramsArr = [
+      'paperTitle',
+      'subject',
+      'time',
+      'startTime',
+      'endTime',
+      'totalScore',
+      'single',
+      'singleScore',
+      'multiple',
+      'multipleScore',
+      'judge',
+      'judgeScore',
+      'completion',
+      "completionScore",
+      'essay',
+      'essayScore',
+      'text'
+    ]
+    const sqlStr = paramsArr.map(item => {
+      return !!params[item] ? `${item}="${params[item]}"` : `${item}=null`
+    }).join(',')
+    // 执行数据库插入
+    await db.query(`update paper set ${sqlStr} where paperId="${params.paperId}"`)
+    ctx.body = {
+      code: 20000,
+      message: '数据更新成功'
+    }
   } else {
-  	ctx.body = {
-  	  code: 10001,
-  	  message: '创建试卷失败'
-  	}
+    // 如果不存在此试卷，则进行创建
+    let flag = false
+    while(!flag) {
+      // 创建id
+      params.paperId = Date.now()
+      flag = await db.isExist(params, 'paper', 'paperId')
+    }
+  
+    params.createdDate = moment().format('YYYY-MM-DD HH:mm:ss')
+    console.log('插入的数据：', params)
+  
+    // 插入数据库
+    if(db.insert(params, 'paper')) {
+      ctx.body = {
+        code: 20000,
+        message: '保存试卷成功',
+        paperId: params.paperId
+      } 
+    } else {
+      ctx.body = {
+        code: 10001,
+        message: '保存试卷失败'
+      }
+    }
   }
 })
 

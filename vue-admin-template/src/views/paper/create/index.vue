@@ -48,56 +48,56 @@
         </div>
 
         <el-form-item prop="totalScore" label="试卷总分">
-          <el-input v-model="paper.totalScore" placeholder="请填写试卷总分" type="number" :min="0" />
+          <el-input v-model.number="paper.totalScore" placeholder="请填写试卷总分" type="number" :min="0" />
         </el-form-item>
 
         <div class="flex-box">
           <el-form-item prop="single" label="单选题数量" class="flex-item">
-            <el-input v-model="paper.single" placeholder="请填写单选题数量" type="number" :min="0" />
+            <el-input v-model.number="paper.single" placeholder="请填写单选题数量" type="number" :min="0" />
           </el-form-item>
 
           <el-form-item prop="singleScore" label="单选题总分" class="flex-item">
-            <el-input v-model="paper.singleScore" placeholder="请填写单选题总分" type="number" :min="0" :max="20" />
+            <el-input v-model.number="paper.singleScore" placeholder="请填写单选题总分" type="number" :min="0" />
           </el-form-item>
         </div>
 
         <div class="flex-box">
           <el-form-item prop="multiple" label="多选题数量" class="flex-item">
-            <el-input v-model="paper.multiple" placeholder="请填写多选题数量" type="number" :min="0" />
+            <el-input v-model.number="paper.multiple" placeholder="请填写多选题数量" type="number" :min="0" />
           </el-form-item>
 
           <el-form-item prop="multipleScore" label="多选题总分" class="flex-item">
-            <el-input v-model="paper.multipleScore" placeholder="请填写多选题总分" type="number" :min="0" />
+            <el-input v-model.number="paper.multipleScore" placeholder="请填写多选题总分" type="number" :min="0" />
           </el-form-item>
         </div>
 
         <div class="flex-box">
           <el-form-item prop="judge" label="判断题数量" class="flex-item">
-            <el-input v-model="paper.judge" placeholder="请填写判断题数量" type="number" :min="0" />
+            <el-input v-model.number="paper.judge" placeholder="请填写判断题数量" type="number" :min="0" />
           </el-form-item>
 
           <el-form-item prop="judgeScore" label="判断题总分" class="flex-item">
-            <el-input v-model="paper.judgeScore" placeholder="请填写判断题总分" type="number" :min="0" />
+            <el-input v-model.number="paper.judgeScore" placeholder="请填写判断题总分" type="number" :min="0" />
           </el-form-item>
         </div>
 
         <div class="flex-box">
           <el-form-item prop="completion" label="填空题数量" class="flex-item">
-            <el-input v-model="paper.completion" placeholder="请填写填空题数量" type="number" :min="0" />
+            <el-input v-model.number="paper.completion" placeholder="请填写填空题数量" type="number" :min="0" />
           </el-form-item>
 
           <el-form-item prop="completionScore" label="填空题总分" class="flex-item">
-            <el-input v-model="paper.completionScore" placeholder="请填写填空题总分" type="number" :min="0" />
+            <el-input v-model.number="paper.completionScore" placeholder="请填写填空题总分" type="number" :min="0" />
           </el-form-item>
         </div>
 
         <div class="flex-box">
           <el-form-item prop="essay" label="问答题数量" class="flex-item">
-            <el-input v-model="paper.essay" placeholder="请填写问答题数量" type="number" :min="0" />
+            <el-input v-model.number="paper.essay" placeholder="请填写问答题数量" type="number" :min="0" />
           </el-form-item>
 
           <el-form-item prop="essayScore" label="问答题总分" class="flex-item">
-            <el-input v-model="paper.essayScore" placeholder="请填写问答题总分" type="number" :min="0" />
+            <el-input v-model.number="paper.essayScore" placeholder="请填写问答题总分" type="number" :min="0" />
           </el-form-item>
         </div>
 
@@ -106,7 +106,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="createPaper">创建</el-button>
+          <el-button type="primary" @click="createPaper">保存</el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -126,17 +126,17 @@ export default {
         time: '', // 考试时间
         startTime: '', // 考试开始时间
         endTime: '', // 考试结束时间
-        totalScore: '150', // 总分
-        single: '10', // 单选题数量
-        singleScore: '0', // 单选题总分
-        multiple: '0', // 多选题数量
-        multipleScore: '0', // 多选题总分
-        judge: '10', // 判断题数量
-        judgeScore: '0', // 判断题总分
-        completion: '3', // 填空题数量
-        completionScore: '0', // 填空题总分
-        essay: '5', // 问答题数量
-        essayScore: '0', // 问答题总分
+        totalScore: '', // 总分
+        single: '', // 单选题数量
+        singleScore: '', // 单选题总分
+        multiple: '', // 多选题数量
+        multipleScore: '', // 多选题总分
+        judge: '', // 判断题数量
+        judgeScore: '', // 判断题总分
+        completion: '', // 填空题数量
+        completionScore: '', // 填空题总分
+        essay: '', // 问答题数量
+        essayScore: '', // 问答题总分
         text: '试卷说明' // 试卷说明
       },
 
@@ -147,31 +147,49 @@ export default {
         time: [{ required: true, message: '请选择考试用时', tigger: 'blur' }],
         startTime: [{ required: true, message: '请填写考试开始时间', tigger: 'blur' }],
         endTime: [{ required: true, message: '请填写考试结束时间', tigger: 'blur' }],
-        totalScore: [{ required: true, message: '请填写试卷总分', tigger: 'blur' }],
-        single: [{ required: true, message: '请填写单选题数量', tigger: 'blur' }],
-        singleScore: [{ required: true, message: '请填写单选题总分', tigger: 'blur' }],
-        multiple: [{ required: true, message: '请填写多选题数量', tigger: 'blur' }],
-        multipleScore: [{ required: true, message: '请填写多选题总分', tigger: 'blur' }],
-        judge: [{ required: true, message: '请填写判断题数量', tigger: 'blur' }],
-        judgeScore: [{ required: true, message: '请填写判断题总分', tigger: 'blur' }],
-        completion: [{ required: true, message: '请填写填空题数量', tigger: 'blur' }],
-        completionScore: [{ required: true, message: '请填写填空题总分', tigger: 'blur' }],
-        essay: [{ required: true, message: '请填写问答题数量', tigger: 'blur' }],
-        essayScore: [{ required: true, message: '请填写问答题总分', tigger: 'blur' }],
+        totalScore: [{ required: true, type:'number', message: '请填写试卷总分', tigger: 'blur' }],
+        single: [{ required: true, type:'number', message: '请填写单选题数量', tigger: 'blur' }],
+        singleScore: [{ required: true, type:'number', message: '请填写单选题总分', tigger: 'blur' }],
+        multiple: [{ required: true, type:'number', message: '请填写多选题数量', tigger: 'blur' }],
+        multipleScore: [{ required: true, type:'number', message: '请填写多选题总分', tigger: 'blur' }],
+        judge: [{ required: true, type:'number', message: '请填写判断题数量', tigger: 'blur' }],
+        judgeScore: [{ required: true, type:'number', message: '请填写判断题总分', tigger: 'blur' }],
+        completion: [{ required: true, type:'number', message: '请填写填空题数量', tigger: 'blur' }],
+        completionScore: [{ required: true, type:'number', message: '请填写填空题总分', tigger: 'blur' }],
+        essay: [{ required: true, type:'number', message: '请填写问答题数量', tigger: 'blur' }],
+        essayScore: [{ required: true, type:'number', message: '请填写问答题总分', tigger: 'blur' }],
         text: [{ required: true, message: '请填写试卷说明', tigger: 'blur' }]
       }
     }
   },
   computed: {
   },
+  created() {
+    // 如果存在试卷id，则请求试卷信息进行修改
+    this.getPaperInfo(this.$route.query.code)
+  },
   methods: {
+    // 获取试卷信息
+    getPaperInfo(id) {
+      if (!id) return false
+      const params = {
+        paperId: +id
+      }
+      // 发起请求
+      this.$store.dispatch('paper/getPaperDetail', params).then(res => {
+        console.log('获取的试卷信息：', res)
+        this.paper = res.data.config
+      }).catch(() => {
+        this.$message.error('试卷信息获取失败，请稍后重试')
+      })
+    },
     // 创建试卷
     createPaper() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           this.$store.dispatch('paper/createPaper', this.paper).then(res => {
             this.$message({
-              message: '试卷创建成功',
+              message: '试卷保存成功',
               type: 'success'
             })
             this.resetForm()

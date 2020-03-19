@@ -50,9 +50,11 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="150">
+        <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="300">
           <template slot-scope="scope">
+            <el-button size="mini" type="info" @click="amend(scope.row.paperId)">更正</el-button>
             <el-button size="mini" type="primary" @click="goEdit(scope.row)">编辑</el-button>
+            <el-button size="mini" type="success">发布</el-button>
             <el-button size="mini" type="danger" @click="deletePaper(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -173,6 +175,10 @@ export default {
     // 跳转到编辑试卷页面
     goEdit(row) {
       this.$router.push('/paper/edit/' + row.paperId)
+    },
+    // 修改试卷配置
+    amend(id) {
+      this.$router.push('/paper/create?code=' + id)
     }
   }
 }

@@ -84,6 +84,26 @@ export const constantRoutes = [
   },
 
   {
+    path: '/question',
+    component: Layout,
+    meta: { title: '我的试题', icon: 'nested' },
+    children: [
+      {
+        path: 'addQuestion',
+        name: 'addQuestion',
+        component: () => import('@/views/question/addQuestion/index'),
+        meta: { title: '添加试题' }
+      },
+      {
+        path: 'wrongQuestion',
+        name: 'wrongQuestion',
+        component: () => import('@/views/question/wrongQuestion/index'),
+        meta: { title: '错题集' }
+      }
+    ]
+  },
+
+  {
     path: '/userInfo',
     component: Layout,
     children: [{

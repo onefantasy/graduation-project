@@ -36,7 +36,7 @@ router.post('/create', async (ctx, next) => {
       'text'
     ]
     const sqlStr = paramsArr.map(item => {
-      return !!params[item] ? `${item}="${params[item]}"` : `${item}=null`
+      return !!params[item] || params[item] === 0 ? `${item}="${params[item]}"` : `${item}=null`
     }).join(',')
     // 执行数据库插入
     await db.query(`update paper set ${sqlStr} where paperId="${params.paperId}"`)
@@ -57,7 +57,7 @@ router.post('/create', async (ctx, next) => {
     console.log('插入的数据：', params)
   
     // 插入数据库
-    if(db.insert(params, 'paper')) {
+    if(await db.insert(params, 'paper')) {
       ctx.body = {
         code: 20000,
         message: '保存试卷成功',

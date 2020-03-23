@@ -20,6 +20,7 @@ const index = require('./routes/index')
 const users = require('./routes/users')
 const image = require('./routes/image')
 const paper = require('./routes/paper')
+const question = require('./routes/question')
 
 // 决解跨域以及options请求
 app.use(
@@ -79,7 +80,7 @@ app.use(async (ctx,next) => {
   if(notAnalyse.indexOf(ctx.url) === -1 && !token.analyse(ctx.header['x-token'],ctx)){
     ctx.body = {
       code: 50008,
-      message: 'invaild token'
+      message: '登陆超时，请重新登陆！'
     }
   } else {
     await next()
@@ -91,6 +92,7 @@ app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(image.routes(), image.allowedMethods())
 app.use(paper.routes(), paper.allowedMethods())
+app.use(question.routes(), question.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

@@ -30,9 +30,10 @@ const query = (sql) => {
 	const connection = _connection()
 	return new Promise(function(resolve,reject){
 		// 2. 执行sql语句
-		connection.query(sql,function(err,resulte,fields){
+		connection.query(sql,function(err,result,fields){
+			console.log('错误：', err)
 			if(err) reject(err)
-			resolve(resulte)
+			resolve(result)
 		})
 		// 3. 关闭链接
 		connection.end()

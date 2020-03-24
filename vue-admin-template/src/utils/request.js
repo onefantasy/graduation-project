@@ -46,7 +46,7 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.code !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
@@ -54,7 +54,7 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50014) {
+      if (res.code === 508 || res.code === 514) {
         // to re-login
         MessageBox.confirm('本账号已经退出登录，请重新登陆', '登录超时', {
           confirmButtonText: '去登录',

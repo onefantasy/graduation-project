@@ -1,8 +1,12 @@
 const router = require('koa-router')()
-// 数据库操作
-const db = require('../common/db.js')
 // token 
 const token = require ('../common/jwt.js')
+//引入bcryptjs 对密码进行加密解密
+const bcrypt = require('bcryptjs');
+
+// 数据库操作
+const users = require('../model/users')
+const Op = require('sequelize').Op
 
 router.prefix('/users')
 
@@ -13,17 +17,28 @@ router.get('/', function (ctx, next) {
 // 用户注册
 router.post('/register',async (ctx, next) => {
   const params = ctx.request.body
-  const flag = await db.isExist(params, 'user', 'account')
-
-  if(!flag) ctx.body = {
-    code: 10001,
-    message: '用户已存在'
-  } 
-  else {
-    db.insert(params, 'user')
+  // 加密用的盐
+  const slat = bcrypt.genSaltSync(10)
+  // 插入数据库时，对密码进行加密
+  params.password = bcrypt.hashSync(params.password, slat)
+  try {
+    const user = await users.create(params)
     ctx.body = {
-      code: 20000,
-      message: '注册成功'
+      code: user ? 200 : 104,
+      data: user,
+      message: user ? '创建成功' : '创建失败'
+    }
+  } catch(err) {
+    if (err.errors && err.errors[0].type === 'unique violation') {
+      ctx.body = {
+        code: 103,
+        message: '该账号已经存在'
+      }
+      return false
+    }
+    ctx.body = {
+      code: 104,
+      message: '出错了'
     }
   }
 })
@@ -31,41 +46,59 @@ router.post('/register',async (ctx, next) => {
 // 登录验证
 router.post('/login', async (ctx, next) => {
   const params = ctx.request.body
-  const result = await db.query(`select password,role from user where account="${params.account}"`)
-  if(result.length === 0){
-  	ctx.body = {
-  		code: 40004,
-  		message: '账号不存在'
-  	}
-  }else if(result[0].password !== params.password){
-  	ctx.body = {
-  		code: 50002,
-  		message: '密码错误'
-  	}
-  }else{
-  	const tag = token.create({account: params.account})
-
-  	ctx.body = {
-  		code: 20000,
-  		message: '登陆成功',
-  		data: {token:tag}
-  	}
+  const data = await users.findOne({
+    where: {
+      account: {
+        [Op.eq]: `${params.account}`
+      }
+    }
+  })
+  if (!data) {
+    ctx.body = {
+      code: 404,
+      message: '账号不存在'
+    }
+  } else if (!bcrypt.compareSync(params.password, data.password)) {
+    // 对密码进行校验，如果不对，则返回下面语句
+    ctx.body = {
+      code: 103,
+      message: '账号或密码错误'
+    }
+  } else {
+    // 对密码进行校验，如果密码正确，则返回下面语句
+    const tag = token.create({account: params.account})
+    ctx.body = {
+      code: 200,
+      message: '登录成功',
+      data: { token: tag }
+    }
   }
 })
 
 // 获取用户信息
 router.get('/info', async (ctx, next) => {
-  const result = await db.query(`select * from user where account="${ctx.account}"`)
-  if (result.length === 0) {
-    ctx.body = {
-      code: 40004,
-      message: '不存在此账号'
+  const params = ctx.account
+  // 查询要设置信息的账户是否存在
+  const user = await users.findOne({
+    where: {
+      account: {
+        [Op.eq]: `${params}`
+      }
     }
-  } else {
+  })
+  // 如果不存在此账户，则说明不存在
+  if (!user) {
     ctx.body = {
-      code: 20000,
-      message: '获取用户信息成功',
-      data: result[0]
+      code: 404,
+      message: '不存在该用户'
+    }
+    return false
+  } else {
+    // 查询成功，返回相应的数据
+    ctx.body = {
+      code: 200,
+      message: '查询成功',
+      data: user
     }
   }
 })
@@ -73,22 +106,39 @@ router.get('/info', async (ctx, next) => {
 // 设置用户信息
 router.post('/setInfo', async (ctx, next) => {
   const params = ctx.request.body
-  const flag = await db.isExist(ctx, 'user', 'account')
-
-  if(!!flag) ctx.body = {
-    code: 10001,
-    message: '用户不存在'
-  } 
-  else {
-    // 生成更新数据
-    const sqlStr = ['name','role','school','major','class','number','age','sex'].map(item => {
-      return !!params[item] ? `${item}="${params[item]}"` : `${item}=null`
-    }).join(',')
-    // 执行数据库插入
-    await db.query(`update user set ${sqlStr} where account="${ctx.account}"`)
+  // 查询要设置信息的账户是否存在
+  const user = await users.findOne({
+    where: {
+      account: {
+        [Op.eq]: `${ctx.account}`
+      }
+    }
+  })
+  // 如果不存在此账户，则说明不存在
+  if (!user) {
     ctx.body = {
-      code: 20000,
-      message: '数据更新成功'
+      code: 404,
+      message: '不存在该用户'
+    }
+    return false
+  }
+  // 更新数据
+  const res = await users.update(params, {
+    where: {
+      account: ctx.account
+    }
+  })
+  if (res) {
+    // 更新成功
+    ctx.body = {
+      code: 200,
+      message: '更新成功'
+    }
+  } else {
+    // 更新失败
+    ctx.body = {
+      code: 500,
+      message: '更新失败'
     }
   }
 })
@@ -96,7 +146,7 @@ router.post('/setInfo', async (ctx, next) => {
 // 退出登陆
 router.post('/logout', async (ctx,next) => {
   ctx.body = {
-  	code: 20000,
+  	code: 200,
   	message: '成功退出'
   }
 })

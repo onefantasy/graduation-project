@@ -98,6 +98,7 @@ export default {
   },
   created() {
     this.userInfo = this.deepCopy(this.$store.getters.userInfo)
+    this.userInfo.sex = +this.userInfo.sex
   },
   methods: {
     // 确认更改表单

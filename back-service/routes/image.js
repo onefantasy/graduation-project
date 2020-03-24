@@ -1,9 +1,11 @@
 const router = require('koa-router')()
 const fs = require('fs')
 
-const db = require('../common/db.js')
 const files = require('../common/files.js')
 const config = require('../config.js')
+
+// 数据库操作
+const users = require('../model/users')
 
 router.prefix('/image')
 
@@ -20,17 +22,35 @@ router.post('/saveHeadIcon', async (ctx,next) => {
     fs.renameSync(path, newPath)
     // 网络请求该图片的路径
     const imgUrl = `http://${config.server_baseUrl}:${config.server_port}/images${newPath.split('images')[1].replace(/\\/g,'/')}`
-    // 存入数据库(目前仅有存入用户头像的数据库的操作)
-    await db.query(`
-      update user set 
-        headIcon="${imgUrl}"
-      where account="${ctx.account}"
-    `)
-    // 返回前段的文件的路径
-    ctx.body = {
-      code: 20000,
-      message: '更改头像成功',
-      imgUrl
+    // // 存入数据库(目前仅有存入用户头像的数据库的操作)
+    // await db.query(`
+    //   update user set 
+    //     headIcon="${imgUrl}"
+    //   where account="${ctx.account}"
+    // `)
+    // // 返回前段的文件的路径
+    // ctx.body = {
+    //   code: 20000,
+    //   message: '更改头像成功',
+    //   imgUrl
+    // }
+    const res = await users.update({
+      headIcon: imgUrl
+    },{
+      where: { account: ctx.account }
+    })
+
+    if (res) {
+      ctx.body = {
+        code: 200,
+        message: '更换头像成功',
+        imgUrl
+      }
+    } else {
+      ctx.body = {
+        code: 104,
+        message: '更换头像失败，请稍后重试'
+      }
     }
   } else {
     ctx.body = {

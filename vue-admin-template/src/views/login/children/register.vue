@@ -121,7 +121,7 @@ export default {
           return this.$store.dispatch('user/register', this.userInfo)
         })
         .then(res => {
-          if (res.code === 20000) {
+          if (res.code === 200) {
             this.$message({
               message: '注册成功，快去登录吧',
               type: 'success'

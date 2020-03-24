@@ -79,7 +79,7 @@ app.use(async (ctx,next) => {
   if(!!ctx.header['x-token']) token.decoded(ctx.header['x-token'], ctx)
   if(notAnalyse.indexOf(ctx.url) === -1 && !token.analyse(ctx.header['x-token'],ctx)){
     ctx.body = {
-      code: 50008,
+      code: 508,
       message: '登陆超时，请重新登陆！'
     }
   } else {

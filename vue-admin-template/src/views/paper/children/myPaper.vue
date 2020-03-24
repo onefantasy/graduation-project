@@ -16,7 +16,11 @@
 
         <el-table-column prop="subject" label="科目" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="createdDate" label="创建时间" align="center" show-overflow-tooltip />
+        <el-table-column prop="createdAt" label="创建时间" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ formatTime(scope.row.createdAt) }}
+          </template>
+        </el-table-column>
 
         <el-table-column prop="startTime" label="开考时间" align="center" show-overflow-tooltip />
 

@@ -123,20 +123,20 @@ export default {
       paper: {
         paperTitle: '试卷标题', // 试卷标题
         subject: '试卷科目', // 试卷科目
-        time: '', // 考试时间
-        startTime: '', // 考试开始时间
-        endTime: '', // 考试结束时间
-        totalScore: '', // 总分
-        single: '', // 单选题数量
-        singleScore: '', // 单选题总分
-        multiple: '', // 多选题数量
-        multipleScore: '', // 多选题总分
-        judge: '', // 判断题数量
-        judgeScore: '', // 判断题总分
-        completion: '', // 填空题数量
-        completionScore: '', // 填空题总分
-        essay: '', // 问答题数量
-        essayScore: '', // 问答题总分
+        time: '02:03:00', // 考试时间
+        startTime: '2020-03-25 09:05:05', // 考试开始时间
+        endTime: '2020-03-28 09:05:05', // 考试结束时间
+        totalScore: 0, // 总分
+        single: 0, // 单选题数量
+        singleScore: 0, // 单选题总分
+        multiple: 0, // 多选题数量
+        multipleScore: 0, // 多选题总分
+        judge: 0, // 判断题数量
+        judgeScore: 0, // 判断题总分
+        completion: 0, // 填空题数量
+        completionScore: 0, // 填空题总分
+        essay: 0, // 问答题数量
+        essayScore: 0, // 问答题总分
         text: '试卷说明' // 试卷说明
       },
 
@@ -173,15 +173,13 @@ export default {
     getPaperInfo(id) {
       if (!id) return false
       const params = {
-        paperId: +id
+        paperId: id
       }
       // 发起请求
       this.$store.dispatch('paper/getPaperDetail', params).then(res => {
         console.log('获取的试卷信息：', res)
         this.paper = res.data.config
-      }).catch(() => {
-        this.$message.error('试卷信息获取失败，请稍后重试')
-      })
+      }).catch(() => {})
     },
     // 创建试卷
     createPaper() {

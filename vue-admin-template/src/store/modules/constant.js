@@ -1,7 +1,7 @@
 const state = {
   // 中文序号
   chineseOrderNumber: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
-  // 题目的同一配置
+  // 题目配置
   question: {
     // 题型与对应的标志关系
     types: [
@@ -11,7 +11,7 @@ const state = {
       { type: 'completion', name: '填空题' },
       { type: 'essay', name: '问答题' }
     ],
-    // 每个的题型的存储内容
+    // 每个的题型的存储格式
     content: {
       single: {
         score: '',

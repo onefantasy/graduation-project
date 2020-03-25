@@ -2,6 +2,11 @@ const sequelize = require('../sequelize')
 const Sequelize = require('sequelize')
 
 const papers = sequelize.define('papers', {
+  paperId: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    primaryKey: true
+  },
   account: {
     type: Sequelize.STRING,
     allowNull: false
@@ -9,11 +14,6 @@ const papers = sequelize.define('papers', {
   paperTitle: {
     type: Sequelize.STRING,
     allowNull: false
-  },
-  paperId: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    primaryKey: true
   },
   subject: {
     type: Sequelize.STRING,
@@ -42,7 +42,12 @@ const papers = sequelize.define('papers', {
   completionScore: Sequelize.INTEGER,
   essay: Sequelize.INTEGER,
   essayScore: Sequelize.INTEGER,
-  text: Sequelize.TEXT
+  text: Sequelize.TEXT,
+  publish: {
+    // 发布状态
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  }
 }, { freezeTableName: true })
 
 module.exports = papers

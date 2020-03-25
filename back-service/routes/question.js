@@ -1,8 +1,17 @@
 const router = require('koa-router')()
 // 数据库操作
 const db = require('../common/db.js')
-// token 
-const token = require ('../common/jwt.js')
+
+// 数据库操作
+// 加载各种题型的模型实例
+const questions = {
+  single: require('../model/singles'),
+  multiple: require('../model/multiples'),
+  judge: require('../model/judges'),
+  completion: require('../model/completions'),
+  essay: require('../model/essays')
+}
+const Op = require('sequelize').Op
 
 router.prefix('/question')
 
@@ -13,53 +22,50 @@ router.get('/', function (ctx, next) {
 // 保存题目
 router.post('/save', async (ctx, next) => {
   const params = ctx.request.body
-  console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++')
-  console.log('保存题目参数：', params)
-  console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++')
-  
+
   // 需要进行操作的表
   const table = params.type
 
   if (params.qid) {
-    // 如果已经存在此试卷，则更改试卷信息
-    const paramsArr = Object.keys(params.content)
-    console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++')
-  	console.log('需要进行操作的键', paramsArr)
-  	console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++')
-    // const sqlStr = paramsArr.map(item => {
-    //   return !!params[item] || params[item] === 0 ? `${item}="${params[item]}"` : `${item}=null`
-    // }).join(',')
-    // // 执行数据库插入
-    // await db.query(`update paper set ${sqlStr} where paperId="${params.paperId}"`)
+    // 存在qid存在，说明需要更改试题信息
+    const where = { qid: params.qid }
+    const data = await questions[table].findOne({ where })
+    console.log('要更改试题的数据：', data)
+    const res = data.update(params.content, { where })
     ctx.body = {
-      code: 20000,
-      message: '数据更新成功'
+      code: res ? 200 : 103,
+      message: res ? '更改成功' : '更改失败'
     }
   } else {
-    // 如果不存在此试卷，则进行创建
-    let flag = false
-    while(!flag) {
+    // 不存在qid，说明为创建试题
+    let flag = true
+    while(flag) {
       // 创建id
       params.content.qid = 'q' + Date.now()
-      flag = await db.isExist(params, table, 'qid')
+      flag = await questions[table].findOne({ where: { qid: params.content.qid } })
     }
 
-    params.content.account = ctx.account
-  
     // 插入数据库
-    if(await db.insert(params.content, table)) {
+    try {
+      params.content.account = ctx.account
+      const res = await questions[table].create(params.content)
       ctx.body = {
-        code: 20000,
-        message: '试题保存成功',
-        qid: params.qid
-      } 
-    } else {
+        code: res ? 200 : 103,
+        data: res,
+        message: res ? '创建成功' : '创建失败'
+      }
+    } catch(err) {
       ctx.body = {
-        code: 10001,
-        message: '试题保存失败'
+        code: 104,
+        message: '出错了'
       }
     }
   }
+})
+
+// 获取试题列表
+router.get('/getQuestionList', async (ctx, next) => {
+  
 })
 
 module.exports = router

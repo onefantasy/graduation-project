@@ -1,31 +1,41 @@
 <template>
   <div class="edit-box">
+    <!-- 试卷标题 开始 -->
     <div class="tc"><h2>{{ config.paperTitle }}</h2></div>
     <div class="tc"><span>试卷总分:{{ config.totalScore }}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>考试时间:{{ config.time }}</span></div>
-    <div class="mt10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ config.text }}</div>
+    <div class="mt10 mb10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ config.text }}</div>
+    <!-- 试卷标题 结束 -->
 
-    <!-- 题目部分 开始 -->
-    <div v-for="item of questionList" :key="item.index">
-      <!-- 题型标题 -->
-      <h2>{{ `${item.index}、${item.name}(${config[item.type + 'Score']}分)` }}</h2>
-      <!-- 题目 开始 -->
-      <div v-for="unit of item.number" :key="unit">
-        <div class="flex-box question-item">
-          <strong>{{ unit }}、</strong>
-          <el-input v-model="questions[item.type]" type="number" :min="0" placeholder="请输入分值" class="score-input" @chang="changScore" />
-        </div>
-      </div>
-      <!-- 题目 结束 -->
-    </div>
-    <!-- 题目部分 结束  -->
+    <el-container>
+      <!-- 题目侧边栏 开始 -->
+      <el-aside width="200px">
+        <el-scrollbar style="height: 100%;">
+          <el-menu style="border: 0;" @select="selectMenuItem">
+            <el-submenu v-for="item of questionList" :key="item.index" :index="item.index">
+              <template slot="title"><i class="el-icon-document" />{{ `${ item.index }、${ item.name }(${ config[item.type + 'Score'] }分)` }}</template>
+              <el-menu-item v-for="unit of item.number" :key="unit" :index="`${ item.type }-${ unit }`">题目{{ unit }}</el-menu-item>
+            </el-submenu>
+          </el-menu>
+        </el-scrollbar>
+      </el-aside>
+      <!-- 题目侧边栏 结束 -->
+
+      <!-- 编辑试卷题目 开始 -->
+      <el-container>
+        <el-main>
+          <question-editor />
+        </el-main>
+      </el-container>
+      <!-- 编辑试卷题目 结束 -->
+    </el-container>
   </div>
 </template>
 
 <script>
-// import editor from '@/components/editor'
+import questionEditor from '@/components/questionEditor'
 export default {
   components: {
-    // editor
+    questionEditor
   },
   data() {
     return {
@@ -38,11 +48,11 @@ export default {
       // 题型与对应的标志
       questionTypes: [],
 
-      // 存储题目的对象
-      questions: {},
-
       // 题目的数据内容
-      questionContent: {}
+      questionContent: {},
+
+      // 存储试卷试题的对象
+      questions: {}
     }
   },
   computed: {
@@ -68,7 +78,7 @@ export default {
     this.chineseOrderNumber = this.$store.getters.constant.chineseOrderNumber
     // 获取题型与其对应标志
     this.questionTypes = this.$store.getters.constant.question.types
-    // 获取每种题型的存储内容
+    // 获取每种题型的存储格式
     this.questionContent = JSON.parse(JSON.stringify(this.$store.getters.constant.question.content))
 
     // 获取试卷信息
@@ -83,24 +93,38 @@ export default {
       }
       // 发起请求
       this.$store.dispatch('paper/getPaperDetail', params).then(res => {
-        console.log('获取的试卷信息：', res)
         this.config = res.data.config
+        // 初始化存储试卷试题的对象
+        this.initQuestions()
       }).catch(() => {
         this.$message.error('试卷信息获取失败，现在返回试卷列表，请稍后重试')
         this.$router.go(-1)
       })
     },
-    // 初始化题目的对象
-    initQuestions() {
-
+    // 选中菜单
+    selectMenuItem(e) {
+      const arr = e.split('-')
+      this.questions[arr[0]][arr[1]]
     },
-    // 更改分数时的回调
-    changScore() {
-      console.log('题目合集：', this.questions)
+    // 初始化试卷存储对象
+    initQuestions() {
+      this.questionTypes.filter(item => {
+        return this.config[item.type]
+      }).map(item => {
+        this.questions[item.type] = []
+      })
     }
   }
 }
 </script>
+
+<style lang="scss">
+.edit-box {
+  .el-scrollbar__wrap{
+    overflow-x: hidden;
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .edit-box {
@@ -124,6 +148,10 @@ export default {
 
   .question-item {
     margin: 10px 0;
+  }
+
+  .mb10 {
+    margin-bottom: 10px;
   }
 }
 </style>

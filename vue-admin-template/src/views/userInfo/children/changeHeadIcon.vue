@@ -60,7 +60,7 @@ export default {
     },
     // 上传图片成功
     uploadSuccess(response, file, fileList) {
-      if (response.code === 20000) {
+      if (response.code === 200) {
         this.$message({
           message: '头像更改成功',
           type: 'success'

@@ -56,7 +56,7 @@
 
         <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="300">
           <template slot-scope="scope">
-            <el-button size="mini" type="info" @click="amend(scope.row.paperId)">更正</el-button>
+            <el-button size="mini" type="info" @click="amend(scope.row.paperId)">修改</el-button>
             <el-button size="mini" type="primary" @click="goEdit(scope.row)">编辑</el-button>
             <el-button size="mini" type="success">发布</el-button>
             <el-button size="mini" type="danger" @click="deletePaper(scope.row)">删除</el-button>
@@ -131,11 +131,14 @@ export default {
         pageSize: this.pageSize,
         type: this.type
       }
-
       // 发起请求
       this.$store.dispatch('paper/getPapers', params).then(res => {
         this.paperList = res.data
         this.total = res.total
+
+        if (this.total === 0) {
+          this.$message.warning('暂无试卷信息！')
+        }
       })
     },
     // 计算表格序号

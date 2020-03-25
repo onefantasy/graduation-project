@@ -23,7 +23,7 @@
       <!-- 编辑试卷题目 开始 -->
       <el-container>
         <el-main>
-          <question-editor />
+          <question-editor ref="questionEditor" />
         </el-main>
       </el-container>
       <!-- 编辑试卷题目 结束 -->
@@ -52,7 +52,10 @@ export default {
       questionContent: {},
 
       // 存储试卷试题的对象
-      questions: {}
+      questions: {},
+
+      // 当前正在编辑的试题
+      currentQuestionContent: {}
     }
   },
   computed: {
@@ -103,6 +106,15 @@ export default {
     },
     // 选中菜单
     selectMenuItem(e) {
+      let flag = this.$refs['questionEditor'].isNeedSave()
+      if (flag) {
+        this.$confirm('编辑的内容尚未保存，确定要离开？').then(() => {
+          flag = true
+        }).catch(() => {
+          flag = false
+        })
+      }
+      if (!flag) return false
       const arr = e.split('-')
       this.questions[arr[0]][arr[1]]
     },

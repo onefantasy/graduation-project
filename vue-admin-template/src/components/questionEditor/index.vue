@@ -34,7 +34,7 @@
       <!-- 主要输入内容区域 结束 -->
 
       <!-- 保存按钮 开始 -->
-      <el-form-item>
+      <el-form-item v-if="!questionInfo.type">
         <el-button type="primary" style="width: 100%;" @click="save">保存</el-button>
       </el-form-item>
       <!-- 保存按钮 结束 -->
@@ -58,7 +58,7 @@ export default {
       type: Object,
       default() {
         return {
-          type: 'single',
+          type: '',
           content: {}
         }
       }
@@ -109,7 +109,24 @@ export default {
       state: '',
 
       // 重置富文本中内容
-      refreshFlag: false
+      refreshFlag: false,
+
+      // 当前编辑的内容是否已经保存
+      isSaved: false
+    }
+  },
+  watch: {
+    // 该值发生变化时，重置输入的值
+    'questionInfo': {
+      handler(newValue, oldValue) {
+        this.question.type = newValue.type
+        this.changeType(newValue)
+        const arr = Object.keys(this.question.content)
+        arr.map(item => {
+          this.question.content[item] = newValue.content[item] || ''
+        })
+      },
+      deep: true
     }
   },
   created() {
@@ -143,7 +160,18 @@ export default {
     },
     // 获取已填写的试题信息（主要给父组件使用）
     getQuestionInfo() {
+      this.isSaved = true
       return this.question.content
+    },
+    // 判断当前编辑的内容是否需要保存或者是否一境保存
+    isNeedSave() {
+      if (this.isSaved) return false
+      const content = this.question.content
+      const arrKeys = Object.keys(content)
+      for (let i = 0; i < arrKeys.length; i++) {
+        if (!!content[arrKeys[i]]) return true
+      }
+      return false
     }
   }
 }

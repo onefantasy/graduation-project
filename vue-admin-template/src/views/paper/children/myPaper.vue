@@ -50,16 +50,16 @@
 
         <el-table-column prop="text" label="试卷说明" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-button size="mini" type="success" @click="watchText(scope.row.text)">查看</el-button>
+            <el-button icon="el-icon-view" size="mini" type="success" @click="watchText(scope.row.text)">查看</el-button>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="300">
+        <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="360">
           <template slot-scope="scope">
-            <el-button size="mini" type="info" @click="amend(scope.row.paperId)">修改</el-button>
-            <el-button size="mini" type="primary" @click="goEdit(scope.row)">编辑</el-button>
-            <el-button size="mini" type="success">发布</el-button>
-            <el-button size="mini" type="danger" @click="deletePaper(scope.row)">删除</el-button>
+            <el-button icon="el-icon-edit-outline" size="mini" type="info" @click="amend(scope.row.paperId)">修改</el-button>
+            <el-button icon="el-icon-edit" size="mini" type="primary" @click="goEdit(scope.row)">编辑</el-button>
+            <el-button icon="el-icon-sort" size="mini" type="success">发布</el-button>
+            <el-button icon="el-icon-remove-outline" size="mini" type="danger" @click="deletePaper(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

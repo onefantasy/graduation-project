@@ -106,8 +106,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="createPaper">保存</el-button>
-          <el-button @click="resetForm">重置</el-button>
+          <el-button icon="el-icon-finished" type="primary" @click="createPaper">保存</el-button>
+          <el-button icon="el-icon-refresh-left" @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -117,6 +117,7 @@
 <script>
 export default {
   components: {},
+  name: 'create',
   data() {
     return {
       // 试卷信息

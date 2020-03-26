@@ -53,8 +53,8 @@
         </el-form-item> -->
       </el-scrollbar>
       <div class="form-button">
-        <el-button type="primary" @click="submitForm">确认更改</el-button>
-        <el-button @click="resetForm">撤销更改</el-button>
+        <el-button icon="el-icon-finished" type="primary" @click="submitForm">确认更改</el-button>
+        <el-button icon="el-icon-refresh-left" @click="resetForm">撤销更改</el-button>
       </div>
     </el-form>
   </div>

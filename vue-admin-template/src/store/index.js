@@ -4,6 +4,8 @@ import getters from './getters'
 import app from './base_modules/app'
 import settings from './base_modules/settings'
 import user from './base_modules/user'
+import tagsView from './base_modules/tagsView'
+import permission from './base_modules/permission'
 
 // 自己定义的模块
 import paper from './modules/paper'
@@ -17,6 +19,8 @@ const store = new Vuex.Store({
     app,
     settings,
     user,
+    tagsView,
+    permission,
     paper,
     constant,
     question

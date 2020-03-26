@@ -17,7 +17,7 @@
       <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过5M</div>
     </el-upload>
     <div class="change-button">
-      <el-button type="primary" @click="submitHeadIcon">更改头像</el-button>
+      <el-button icon="el-icon-upload2" type="primary" @click="submitHeadIcon">更改头像</el-button>
     </div>
   </div>
 </template>

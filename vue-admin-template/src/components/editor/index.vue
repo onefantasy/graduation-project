@@ -21,18 +21,25 @@ export default {
   },
   props: {
     obj: {
+      // 父组件传进来的对象，用绑定改变的数据
       type: Object,
       default() {
         return {}
       }
     },
     keyWord: {
+      // 父组件传进来需要绑定的对象上的某个键
       type: String,
       default: ''
     },
     refresh: {
       type: Boolean,
       default: true
+    },
+    defalutContent: {
+      // 默认值，传入空字符串用于重置当前编辑器的内容
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -42,8 +49,9 @@ export default {
     }
   },
   watch: {
-    'refresh'() {
-      this.content = ''
+    'defalutContent'() {
+      // 监听传入默认值的变化，更改当前编辑器的内容
+      this.content = this.defalutContent
     }
   },
   created() {

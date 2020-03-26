@@ -41,7 +41,7 @@ export default {
 }
 .app-main-scrollbar {
   position: absolute;;
-  top: 50px;
+  top: 84px;
   bottom: 0;
   left: 0;
   right: 0;

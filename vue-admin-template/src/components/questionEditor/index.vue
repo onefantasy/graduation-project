@@ -22,7 +22,7 @@
             v-if="useEditor.indexOf(index) !== -1"
             :obj="question.content"
             :key-word="index"
-            :refresh="refreshFlag"
+            :defalut-content="question.content[index]"
           />
           <el-radio-group v-else-if="question.type === 'judge' && index === 'rightKey'" v-model="question.content[index]">
             <el-radio-button v-for="unit of judgeOptions" :key="unit" :label="unit" />
@@ -47,22 +47,6 @@ import editor from '@/components/editor'
 export default {
   components: {
     editor
-  },
-  props: {
-    /*
-     * 该值接收父组件传来的试题信息（{ type, content }）
-     * type 为试题类型，如果存在，则禁止更改试题类型
-     * content 为试题的存储内容
-    */
-    questionInfo: {
-      type: Object,
-      default() {
-        return {
-          type: '',
-          content: {}
-        }
-      }
-    }
   },
   data() {
     return {
@@ -108,25 +92,19 @@ export default {
       // 本次题目所属的类型
       state: '',
 
-      // 重置富文本中内容
-      refreshFlag: false,
-
       // 当前编辑的内容是否已经保存
-      isSaved: false
-    }
-  },
-  watch: {
-    // 该值发生变化时，重置输入的值
-    'questionInfo': {
-      handler(newValue, oldValue) {
-        this.question.type = newValue.type
-        this.changeType(newValue)
-        const arr = Object.keys(this.question.content)
-        arr.map(item => {
-          this.question.content[item] = newValue.content[item] || ''
-        })
-      },
-      deep: true
+      isSaved: false,
+
+      // 父组件控制该组件的参数
+      /*
+       * 该值接收父组件传来的试题信息（{ type, content }）
+       * type 为试题类型，如果存在，则禁止更改试题类型
+       * content 为试题的存储内容
+      */
+      questionInfo: {
+        type: '',
+        content: {}
+      }
     }
   },
   created() {
@@ -144,6 +122,7 @@ export default {
   methods: {
     // 改变题目类型时，更改试题存储格式
     changeType(e) {
+      this.$refs['form'].resetFields()
       this.question.content = JSON.parse(JSON.stringify(this.questionContent[this.question.type]))
     },
     // 保存
@@ -153,25 +132,40 @@ export default {
         this.$message.success(res.message)
         delete this.question.content.state
         this.$refs['form'].resetFields()
-        this.refreshFlag = !this.refreshFlag
       }).catch(() => {
         delete this.question.content.state
       })
     },
     // 获取已填写的试题信息（主要给父组件使用）
     getQuestionInfo() {
+      // 调用该函数时，表示试题信息已经保存
       this.isSaved = true
       return this.question.content
     },
-    // 判断当前编辑的内容是否需要保存或者是否一境保存
+    // 判断当前编辑的内容是否需要保存或者是否一境保存（主要给父组件使用）
     isNeedSave() {
       if (this.isSaved) return false
       const content = this.question.content
       const arrKeys = Object.keys(content)
       for (let i = 0; i < arrKeys.length; i++) {
-        if (!!content[arrKeys[i]]) return true
+        if (content[arrKeys[i]]) return true
       }
       return false
+    },
+    // 父组件更改子组件的存储格式以及存储类型(主要给父组件使用)
+    changeQuestionInfo(newValue) {
+      // 更改当前 是否已经保存 的标志的值
+      this.isSaved = false
+      // 重置输入的内容
+      this.$refs['form'].resetFields()
+      // 更新存储格式
+      this.questionInfo = newValue
+      this.question.type = newValue.type
+      this.changeType(newValue)
+      const arr = Object.keys(this.question.content)
+      arr.map(item => {
+        this.question.content[item] = newValue.content[item] || ''
+      })
     }
   }
 }

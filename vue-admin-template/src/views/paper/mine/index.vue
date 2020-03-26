@@ -15,6 +15,7 @@ export default {
   components: {
     myPaper
   },
+  name: 'mine',
   data() {
     return {
       // 当前选中的tab

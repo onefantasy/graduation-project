@@ -15,7 +15,9 @@ const essays = sequelize.define('essays', {
   state: Sequelize.STRING,
   content: Sequelize.TEXT,
   score: Sequelize.INTEGER,
-  rightKey: Sequelize.TEXT
+  rightKey: Sequelize.TEXT,
+  // 试题在试卷中的序号
+  orderNumber: Sequelize.INTEGER
 }, { freezeTableName: true })
 
 module.exports = essays

@@ -39,10 +39,10 @@
 <script>
 import questionEditor from '@/components/questionEditor'
 export default {
+  name: 'EditPaper',
   components: {
     questionEditor
   },
-  name: 'edit',
   data() {
     return {
       // 试卷配置

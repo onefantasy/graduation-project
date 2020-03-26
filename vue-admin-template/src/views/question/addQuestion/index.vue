@@ -7,10 +7,10 @@
 <script>
 import questionEditor from '@/components/questionEditor'
 export default {
+  name: 'AddQuestion',
   components: {
     questionEditor
   },
-  name: 'addQuestion',
   data() {
     return {}
   },

@@ -26,7 +26,7 @@ import changeInfo from './children/changeInfo'
 import changeHeadIcon from './children/changeHeadIcon'
 
 export default {
-  name: 'userInfo',
+  name: 'UserInfo',
   components: {
     userCard,
     changeInfo,

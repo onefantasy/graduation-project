@@ -116,8 +116,8 @@
 
 <script>
 export default {
+  name: 'Create',
   components: {},
-  name: 'create',
   data() {
     return {
       // 试卷信息

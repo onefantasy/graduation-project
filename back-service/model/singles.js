@@ -19,7 +19,9 @@ const singles = sequelize.define('singles', {
   B: Sequelize.TEXT,
   C: Sequelize.TEXT,
   D: Sequelize.TEXT,
-  rightKey: Sequelize.STRING
+  rightKey: Sequelize.STRING,
+  // 试题在试卷中的序号
+  orderNumber: Sequelize.INTEGER
 }, { freezeTableName: true })
 
 module.exports = singles

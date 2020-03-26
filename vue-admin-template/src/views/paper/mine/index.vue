@@ -1,9 +1,13 @@
 <template>
   <div class="mine-box">
-    <el-tabs v-model="activeName">
-      <el-tab-pane label="考过的试卷" name="exams">考过的试卷</el-tab-pane>
+    <el-tabs v-model="activeName" type="border-card">
+      <el-tab-pane label="考过的试卷" name="exams">
+        <span slot="label"><i class="el-icon-document" /> 考过的试卷</span>
+        考过的试卷
+      </el-tab-pane>
       <el-tab-pane label="创建的试卷" name="created">
-        <my-paper :type="activeName" />
+        <span slot="label"><i class="el-icon-edit-outline" /> 创建的试卷</span>
+        <my-paper />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -12,10 +16,10 @@
 <script>
 import myPaper from '../children/myPaper'
 export default {
+  name: 'Mine',
   components: {
     myPaper
   },
-  name: 'mine',
   data() {
     return {
       // 当前选中的tab

@@ -63,19 +63,19 @@ export const constantRoutes = [
     children: [
       {
         path: 'create',
-        name: 'create',
+        name: 'Create',
         component: () => import('@/views/paper/create/index'),
         meta: { title: '创建试卷' }
       },
       {
         path: 'mine',
-        name: 'mine',
+        name: 'Mine',
         component: () => import('@/views/paper/mine/index'),
         meta: { title: '我的试卷' }
       },
       {
         path: 'edit/:id',
-        name: 'edit',
+        name: 'EditPaper',
         component: () => import('@/views/paper/edit/index'),
         meta: { title: '编辑试卷' },
         hidden: true
@@ -90,13 +90,13 @@ export const constantRoutes = [
     children: [
       {
         path: 'addQuestion',
-        name: 'addQuestion',
+        name: 'AddQuestion',
         component: () => import('@/views/question/addQuestion/index'),
         meta: { title: '添加试题' }
       },
       {
         path: 'wrongQuestion',
-        name: 'wrongQuestion',
+        name: 'WrongQuestion',
         component: () => import('@/views/question/wrongQuestion/index'),
         meta: { title: '错题集' }
       }
@@ -108,9 +108,9 @@ export const constantRoutes = [
     component: Layout,
     children: [{
       path: 'index',
-      name: 'userInfo',
+      name: 'UserInfo',
       component: () => import('@/views/userInfo/index'),
-      meta: { title: '个人中心', icon: 'user'}
+      meta: { title: '个人中心', icon: 'user' }
     }]
   },
   // 404 page must be placed at the end !!!

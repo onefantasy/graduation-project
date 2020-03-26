@@ -1,8 +1,17 @@
 <template>
   <div class="my-paper-box">
+    <!-- 查询 开始 -->
+    <div class="search-box">
+      <el-input v-model="searchKeys.paperId" clearable placeholder="试卷编号" />
+      <el-input v-model="searchKeys.paperTitle" clearable placeholder="试卷标题" />
+      <el-input v-model="searchKeys.subject" clearable placeholder="科目" />
+      <el-button icon="el-icon-search" class="fr" @click.stop="search" />
+    </div>
+    <!-- 查询 结束 -->
+
     <!-- 表格 开始 -->
     <div>
-      <el-table :data="paperList" border>
+      <el-table :data="paperList" border stripe>
 
         <el-table-column label="序号" width="50" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
@@ -87,13 +96,6 @@
 
 <script>
 export default {
-  props: {
-    // 页面类型（考过的试卷-exams、创建的试卷-created）
-    type: {
-      type: String,
-      default: ''
-    }
-  },
   data() {
     return {
       // 当前表格的页码
@@ -115,7 +117,14 @@ export default {
       text: '',
 
       // 是否显示查看试卷说明的弹窗
-      textDialog: false
+      textDialog: false,
+
+      // 查询关键字
+      searchKeys: {
+        paperId: '', // 试卷编码
+        paperTitle: '', // 试卷标题
+        subject: '' // 科目
+      }
     }
   },
   created() {
@@ -129,7 +138,7 @@ export default {
       const params = {
         page: this.page,
         pageSize: this.pageSize,
-        type: this.type
+        ...this.searchKeys
       }
       // 发起请求
       this.$store.dispatch('paper/getPapers', params).then(res => {
@@ -149,6 +158,16 @@ export default {
     formatTime(time) {
       return this.$moment(time).format('YYYY-MM-DD HH:mm:ss')
     },
+    // 返回一个对象中非空的值合成的对象
+    // objRemoveNull(obj) {
+    //   const newObj = {}
+    //   for (let key in obj) {
+    //     if (obj[key]) {
+    //       newObj[key] = obj[key]
+    //     }
+    //   }
+    //   return newObj
+    // },
     // 查看试卷说明
     watchText(text) {
       this.text = text
@@ -186,15 +205,41 @@ export default {
     // 修改试卷配置
     amend(id) {
       this.$router.push('/paper/create?code=' + id)
+    },
+    // 查询试卷
+    search() {
+      this.page = 1
+      this.getPapers()
     }
   }
 }
 </script>
 
+<style lang="scss">
+.my-paper-box {
+  .search-box {
+    margin-bottom: 10px;
+    background: #E4E7ED;
+    padding: 5px;
+    border: 1px solid #D3D6DC;
+    border-radius: 5px;
+
+    .el-input {
+      width: 250px;
+      margin-left: 5px;
+    }
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 .my-paper-box {
   .pagination{
     margin-top: 10px;
+  }
+
+  .fr {
+    float: right;
   }
 }
 </style>

@@ -55,8 +55,11 @@ router.post('/create', async (ctx, next) => {
 // 查询试卷列表（包括考过的和创建的）
 router.get('/getPapers', async (ctx, next) => {
   const params = ctx.query
-
+  const searchArr = ['paperId', 'paperTitle', 'subject']
   const where = { account: ctx.account }
+  searchArr.map(item => {
+    params[item] && (where[item] = { [Op.substring]: params[item] })
+  })
   const { rows: data, count: total } = await papers.findAndCountAll({
     where,
     offset: (+params.page - 1) * +params.pageSize,

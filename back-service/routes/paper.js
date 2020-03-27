@@ -60,6 +60,7 @@ router.get('/getPapers', async (ctx, next) => {
   searchArr.map(item => {
     params[item] && (where[item] = { [Op.substring]: params[item] })
   })
+  params.publish && ( where.publish = params.publish === 'true' )
   const { rows: data, count: total } = await papers.findAndCountAll({
     where,
     offset: (+params.page - 1) * +params.pageSize,
@@ -91,7 +92,7 @@ router.post('/detelePaper', async (ctx, next) => {
 // 根据试卷id获取试卷信息
 router.get('/getPaperDetail', async (ctx, next) => {
   const params = ctx.query
-  const where = { account: ctx.account, paperId: params.paperId }
+  const where = { paperId: params.paperId }
   const data = await papers.findOne({ where })
   ctx.body = {
     code: data ? 200 : 103,
@@ -100,5 +101,15 @@ router.get('/getPaperDetail', async (ctx, next) => {
   }
 })
 
+// 改变试卷的发布状态
+router.post('/changePublish', async (ctx, next) => {
+  const params = ctx.request.body
+  console.log('接收到到参数：', params)
+  const res = await papers.update({ publish: !params.publish }, { where: { paperId: params.paperId, account: ctx.account } })
+  ctx.body = {
+    code: res ? 200 : 103,
+    message: res ? '更改成功' : '更改失败'
+  }
+})
 
 module.exports = router

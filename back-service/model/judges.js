@@ -13,7 +13,7 @@ const judges = sequelize.define('judges', {
   },
   paperId: Sequelize.STRING,
   state: Sequelize.STRING,
-  content: Sequelize.TEXT,
+  content: Sequelize.TEXT('long'),
   score: Sequelize.INTEGER,
   rightKey: Sequelize.STRING,
   // 试题在试卷中的序号

@@ -1,17 +1,15 @@
 const router = require('koa-router')()
-// 数据库操作
-const db = require('../common/db.js')
 
 // 数据库操作
 // 加载各种题型的模型实例
 const questions = {
-  single: require('../model/singles'),
-  multiple: require('../model/multiples'),
-  judge: require('../model/judges'),
-  completion: require('../model/completions'),
-  essay: require('../model/essays')
+  singles: require('../model/singles'),
+  multiples: require('../model/multiples'),
+  judges: require('../model/judges'),
+  completions: require('../model/completions'),
+  essays: require('../model/essays')
 }
-const Op = require('sequelize').Op
+// const Op = require('sequelize').Op
 
 router.prefix('/question')
 
@@ -30,7 +28,6 @@ router.post('/save', async (ctx, next) => {
     // 存在qid存在，说明需要更改试题信息
     const where = { qid: params.qid }
     const data = await questions[table].findOne({ where })
-    console.log('要更改试题的数据：', data)
     const res = data.update(params.content, { where })
     ctx.body = {
       code: res ? 200 : 103,
@@ -63,9 +60,21 @@ router.post('/save', async (ctx, next) => {
   }
 })
 
-// 获取试题列表
-router.get('/getQuestionList', async (ctx, next) => {
-  
+// 根据试卷id查询该试卷已经存储到所有题目
+router.get('/getPaperQuestions', async (ctx, next) => {
+  // 所有试题类型的表格
+  const tables = Object.keys(questions)
+  const where = { paperId: ctx.query.paperId }
+  const data = {}
+  for (let item of tables) {
+    const res = await questions[item].findAll({ where })
+    res.length && (data[item] = res)
+  }
+  ctx.body = {
+    code: 200,
+    data,
+    message: '查询成功'
+  }
 })
 
 module.exports = router

@@ -86,20 +86,10 @@ router.get('/info', async (ctx, next) => {
       }
     }
   })
-  // 如果不存在此账户，则说明不存在
-  if (!user) {
-    ctx.body = {
-      code: 404,
-      message: '不存在该用户'
-    }
-    return false
-  } else {
-    // 查询成功，返回相应的数据
-    ctx.body = {
-      code: 200,
-      message: '查询成功',
-      data: user
-    }
+  ctx.body = {
+    code: user ? 200 : 404,
+    message: user ? '查询成功' : '不存在该用户',
+    data: user
   }
 })
 
@@ -128,18 +118,10 @@ router.post('/setInfo', async (ctx, next) => {
       account: ctx.account
     }
   })
-  if (res) {
-    // 更新成功
-    ctx.body = {
-      code: 200,
-      message: '更新成功'
-    }
-  } else {
-    // 更新失败
-    ctx.body = {
-      code: 500,
-      message: '更新失败'
-    }
+
+  ctx.body = {
+    code: res ? 200 : 500,
+    message: res ? '更新成功' : '更新失败'
   }
 })
 

@@ -13,7 +13,7 @@ const completions = sequelize.define('completions', {
   },
   paperId: Sequelize.STRING,
   state: Sequelize.STRING,
-  content: Sequelize.TEXT,
+  content: Sequelize.TEXT('long'),
   score: Sequelize.INTEGER,
   spaceNumber: Sequelize.INTEGER,
   rightKey: Sequelize.STRING,

@@ -18,13 +18,11 @@
       <!-- 主要输入内容区域 开始 -->
       <div v-if="question.content">
         <el-form-item v-for="(item, index) of question.content" :key="index" :label="fieldTip[index]" :prop="'content.' + index">
-          <editor
+          <quill-editor
             v-if="useEditor.indexOf(index) !== -1"
-            :obj="question.content"
-            :key-word="index"
-            :defalut-content="question.content[index]"
+            v-model="question.content[index]"
           />
-          <el-radio-group v-else-if="question.type === 'judge' && index === 'rightKey'" v-model="question.content[index]">
+          <el-radio-group v-else-if="question.type === 'judges' && index === 'rightKey'" v-model="question.content[index]">
             <el-radio-button v-for="unit of judgeOptions" :key="unit" :label="unit" />
           </el-radio-group>
           <el-input v-else-if="numberField.indexOf(index) !== -1" v-model.number="question.content[index]" type="number" />
@@ -33,9 +31,23 @@
       </div>
       <!-- 主要输入内容区域 结束 -->
 
+
+      <!-- 正确答案的填写格式 开始 -->
+      <el-form-item>
+        正确答案格式：<br />
+        1. 答案的前后注意不要有空格<br />
+        2. 单选题请在输入框中输入唯一到正确答案，如：A<br />
+        3. 多选题请将答案依次写在输入框中，每个答案之间不要有空格或者他符号，如：ABCD<br />
+        4. 判断题请选择正确答案即可<br />
+        5. 填空题中，每个答案请用空格隔开，如：A B C<br />
+        6. 问答题只需将答案写在输入框中即可，没有特殊要求<br />
+      </el-form-item>
+      <!-- 正确答案的填写格式 结束  -->
+
       <!-- 保存按钮 开始 -->
       <el-form-item v-if="!questionInfo.type">
-        <el-button type="primary" style="width: 100%;" @click="save">保存</el-button>
+        <el-button icon="el-icon-finished" type="primary" @click="save">保存</el-button>
+        <el-button icon="el-icon-refresh-left" @click="changeType">重置</el-button>
       </el-form-item>
       <!-- 保存按钮 结束 -->
     </el-form>
@@ -43,10 +55,13 @@
 </template>
 
 <script>
-import editor from '@/components/editor'
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 export default {
   components: {
-    editor
+    quillEditor
   },
   data() {
     return {
@@ -58,7 +73,7 @@ export default {
 
       // 题目的存储内容格式
       question: {
-        type: 'single', // 试题类型
+        type: '', // 试题类型
         content: {} // 试题内容
       },
 
@@ -113,6 +128,7 @@ export default {
     // 从仓库获取所有的试题类型
     this.questionTypes = this.$store.getters.constant.question.types
     // 初始化题目的存储内容
+    this.question.type = this.questionTypes[0].type
     this.question.content = JSON.parse(JSON.stringify(this.questionContent[this.question.type]))
     // 从仓库获取所有的题目字段与对应的提示
     this.fieldTip = this.$store.getters.constant.question.fieldTip
@@ -127,6 +143,14 @@ export default {
     },
     // 保存
     save() {
+      let flag = true
+      this.$refs['form'].validate(valid => {
+        flag = valid
+      })
+      if (!flag) {
+        this.$message.warning('请先将试题信息完善再进行提交！')
+        return false
+      }
       this.question.content.state = this.$store.getters.constant.question.state.collection
       this.$store.dispatch('question/saveQuestion', this.question).then(res => {
         this.$message.success(res.message)
@@ -159,9 +183,9 @@ export default {
       // 重置输入的内容
       this.$refs['form'].resetFields()
       // 更新存储格式
-      this.questionInfo = newValue
       this.question.type = newValue.type
       this.changeType(newValue)
+      this.questionInfo = newValue
       const arr = Object.keys(this.question.content)
       arr.map(item => {
         this.question.content[item] = newValue.content[item] || ''

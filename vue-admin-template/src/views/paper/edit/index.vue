@@ -28,7 +28,7 @@
             <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
             <el-button icon="el-icon-finished" type="primary" class="fr" @click="saveQuestion">保存</el-button>
           </div>
-          <question-editor ref="questionEditor" :question-info="currentQuestion" />
+          <question-editor v-if="showEditor" ref="questionEditor" :question-info="currentQuestion" />
         </el-main>
       </el-container>
       <!-- 编辑试卷题目 结束 -->
@@ -70,7 +70,10 @@ export default {
       currentQuestionIndex: '',
 
       // 试题列表
-      questionList: []
+      questionList: [],
+
+      // 是否显示编辑区域
+      showEditor: true
     }
   },
   created() {
@@ -98,37 +101,46 @@ export default {
         this.initQuestions()
         // 初始化试题列表
         this.initQuestionList()
+        // 获取该试卷的试卷试题
+        this.getPaperQuestions()
       }).catch(() => {
         this.$message.error('试卷信息获取失败，现在返回试卷列表，请稍后重试')
         this.$router.go(-1)
       })
     },
+    // 根据试卷id获取该试卷的所有试题
+    getPaperQuestions() {
+      this.$store.dispatch('question/getPaperQuestions', { paperId: this.$route.params.id }).then(res => {
+        // 将试题记录覆盖到当前试卷上
+        this.coverRecord(res.data)
+      })
+    },
     // 选中试题列表中的某一项
     async selectMenuItem(e) {
       // 同样路径不进行任何操作
-      if (e === this.currentQuestionIndex) return true
+      // if (e === this.currentQuestionIndex) return true
       // 判断当前内容是否需要保存
-      let flag = this.$refs['questionEditor'].isNeedSave()
-      // 保存提示
-      flag && await this.$confirm('编辑的内容尚未保存，确定要离开？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        flag = false
-      }).catch(() => {
-        flag = true
-      })
-      if (flag) {
-        const old = this.currentQuestionIndex
-        this.currentQuestionIndex = e
-        // 直接改变没有效果，所以使用定时器延迟修改
-        // 定时器设定当前编辑的试题的索引
-        setTimeout(() => {
-          this.currentQuestionIndex = old
-        }, 100)
-        return false
-      }
+      // let flag = this.$refs['questionEditor'].isNeedSave()
+      // // 保存提示
+      // flag && await this.$confirm('编辑的内容尚未保存，确定要离开？', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   flag = false
+      // }).catch(() => {
+      //   flag = true
+      // })
+      // if (flag) {
+      //   const old = this.currentQuestionIndex
+      //   this.currentQuestionIndex = e
+      //   // 直接改变没有效果，所以使用定时器延迟修改
+      //   // 定时器设定当前编辑的试题的索引
+      //   setTimeout(() => {
+      //     this.currentQuestionIndex = old
+      //   }, 100)
+      //   return false
+      // }
       const arr = e.split('-')
       // 更改指定题目
       this.currentQuestionIndex = e
@@ -138,12 +150,25 @@ export default {
       this.$refs['questionEditor'].changeQuestionInfo(this.currentQuestion)
     },
     // 初始化试卷存储对象
-    initQuestions() {
+    initQuestions(record) {
       this.questionTypes.filter(item => {
         return this.config[item.type]
       }).map(item => {
         this.questions[item.type] = []
       })
+    },
+    // 将之前编辑好的试题记录覆盖到当前试卷上
+    coverRecord(record) {
+      const keys = Object.keys(this.questions)
+      keys.map(item => {
+        if (record[item]) {
+          for (const unit of record[item]) {
+            this.questions[item][unit.orderNumber] = unit
+          }
+        }
+      })
+      // 赋予初始选项一到值的内容
+      this.selectMenuItem(this.currentQuestionIndex)
     },
     // 初始化试题列表
     initQuestionList() {
@@ -195,10 +220,27 @@ export default {
     saveQuestion() {
       // 拆分当前索引，用于找寻存储空间
       const arr = this.currentQuestionIndex.split('-')
+      const content = this.questions[arr[0]][arr[1]] || {}
       // 将返回的内容保存到对应的存储空间
-      this.questions[arr[0]][arr[1]] = Object.assign({}, this.$refs['questionEditor'].getQuestionInfo())
-      // 保存成功提醒
-      this.$message.success('保存成功！')
+      Object.assign(content, this.$refs['questionEditor'].getQuestionInfo())
+      for (const item in content) {
+        // 如果是字符串，去除前后空格
+        if (typeof content[item] === 'string') {
+          content[item].trim()
+        }
+      }
+      content.orderNumber = +arr[1]
+      content.paperId = this.$route.params.id
+      this.questions[arr[0]][arr[1]] = content
+      const data = { content, type: arr[0] }
+      content.qid && (data.qid = content.qid)
+      this.$store.dispatch('question/saveQuestion', data).then(res => {
+        // 保存成功提醒
+        this.$message.success('保存成功！')
+      }).catch(() => {
+        // 保存失败提醒
+        this.$message.error('保存失败！')
+      })
     }
   }
 }

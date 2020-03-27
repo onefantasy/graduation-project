@@ -5,6 +5,14 @@
       <el-input v-model="searchKeys.paperId" clearable placeholder="试卷编号" />
       <el-input v-model="searchKeys.paperTitle" clearable placeholder="试卷标题" />
       <el-input v-model="searchKeys.subject" clearable placeholder="科目" />
+      <el-select v-model="searchKeys.publish" clearable placeholder="发布状态">
+        <el-option
+          v-for="item in publishState"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
       <el-button icon="el-icon-search" class="fr" @click.stop="search" />
     </div>
     <!-- 查询 结束 -->
@@ -31,43 +39,48 @@
           </template>
         </el-table-column>
 
+        <el-table-column prop="publish" label="发布" align="center" width="110px" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button icon="el-icon-sort" :type="scope.row.publish ? 'success':'warning'" size="mini" @click="changePublish(scope.row)">{{ scope.row.publish ? '已发布' : '未发布' }}</el-button>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="startTime" label="开考时间" align="center" show-overflow-tooltip />
 
         <el-table-column prop="endTime" label="截止时间" align="center" show-overflow-tooltip />
 
         <el-table-column prop="time" label="考试用时" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="single" label="单选题量" align="center" show-overflow-tooltip />
+        <el-table-column prop="singles" label="单选题量" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="singleScore" label="单选总分" align="center" show-overflow-tooltip />
+        <el-table-column prop="singlesScore" label="单选总分" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="multiple" label="多选题量" align="center" show-overflow-tooltip />
+        <el-table-column prop="multiples" label="多选题量" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="multipleScore" label="多选总分" align="center" show-overflow-tooltip />
+        <el-table-column prop="multiplesScore" label="多选总分" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="judge" label="判断题量" align="center" show-overflow-tooltip />
+        <el-table-column prop="judges" label="判断题量" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="judgeScore" label="判断总分" align="center" show-overflow-tooltip />
+        <el-table-column prop="judgesScore" label="判断总分" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="completion" label="填空题量" align="center" show-overflow-tooltip />
+        <el-table-column prop="completions" label="填空题量" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="completionScore" label="填空总分" align="center" show-overflow-tooltip />
+        <el-table-column prop="completionsScore" label="填空总分" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="essay" label="问答题量" align="center" show-overflow-tooltip />
+        <el-table-column prop="essays" label="问答题量" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="essayScore" label="问答总分" align="center" show-overflow-tooltip />
+        <el-table-column prop="essaysScore" label="问答总分" align="center" show-overflow-tooltip />
 
-        <el-table-column prop="text" label="试卷说明" align="center" show-overflow-tooltip>
+        <el-table-column prop="text" label="试卷说明" align="center" width="95px" show-overflow-tooltip>
           <template slot-scope="scope">
             <el-button icon="el-icon-view" size="mini" type="success" @click="watchText(scope.row.text)">查看</el-button>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="360">
+        <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="270">
           <template slot-scope="scope">
             <el-button icon="el-icon-edit-outline" size="mini" type="info" @click="amend(scope.row.paperId)">修改</el-button>
             <el-button icon="el-icon-edit" size="mini" type="primary" @click="goEdit(scope.row)">编辑</el-button>
-            <el-button icon="el-icon-sort" size="mini" type="success">发布</el-button>
             <el-button icon="el-icon-remove-outline" size="mini" type="danger" @click="deletePaper(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -123,11 +136,18 @@ export default {
       searchKeys: {
         paperId: '', // 试卷编码
         paperTitle: '', // 试卷标题
-        subject: '' // 科目
-      }
+        subject: '', // 科目
+        publish: '' // 试卷发布状态
+      },
+
+      // 获取试卷发布状态
+      publishState: []
     }
   },
   created() {
+    // 获取试卷发布状态
+    this.publishState = this.$store.getters.constant.publishState
+
     // 请求数据
     this.getPapers()
   },
@@ -144,7 +164,6 @@ export default {
       this.$store.dispatch('paper/getPapers', params).then(res => {
         this.paperList = res.data
         this.total = res.total
-
         if (this.total === 0) {
           this.$message.warning('暂无试卷信息！')
         }
@@ -158,16 +177,6 @@ export default {
     formatTime(time) {
       return this.$moment(time).format('YYYY-MM-DD HH:mm:ss')
     },
-    // 返回一个对象中非空的值合成的对象
-    // objRemoveNull(obj) {
-    //   const newObj = {}
-    //   for (let key in obj) {
-    //     if (obj[key]) {
-    //       newObj[key] = obj[key]
-    //     }
-    //   }
-    //   return newObj
-    // },
     // 查看试卷说明
     watchText(text) {
       this.text = text
@@ -210,6 +219,19 @@ export default {
     search() {
       this.page = 1
       this.getPapers()
+    },
+    // 更改试卷发布状态
+    changePublish(row) {
+      const data = {
+        paperId: row.paperId,
+        publish: row.publish
+      }
+      const text = row.publish ? '撤回成功！' : '发布成功！'
+      // 发出请求
+      this.$store.dispatch('paper/changePublish', data).then(res => {
+        this.$message.success(text)
+        this.getPapers()
+      })
     }
   }
 }

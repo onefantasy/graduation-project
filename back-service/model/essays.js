@@ -13,9 +13,9 @@ const essays = sequelize.define('essays', {
   },
   paperId: Sequelize.STRING,
   state: Sequelize.STRING,
-  content: Sequelize.TEXT,
+  content: Sequelize.TEXT('long'),
   score: Sequelize.INTEGER,
-  rightKey: Sequelize.TEXT,
+  rightKey: Sequelize.TEXT('long'),
   // 试题在试卷中的序号
   orderNumber: Sequelize.INTEGER
 }, { freezeTableName: true })

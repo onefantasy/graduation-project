@@ -35,3 +35,12 @@ export function getPaperDetail(params) {
     params
   })
 }
+
+// 更改试卷发布状态
+export function changePublish(data) {
+  return request({
+    url: '/paper/changePublish',
+    method: 'post',
+    data
+  })
+}

@@ -53,7 +53,7 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
 
-      // 50008: Illegal token; 50014: Token expired;
+      // 508: Illegal token; 514: Token expired;
       if (res.code === 508 || res.code === 514) {
         // to re-login
         MessageBox.confirm('本账号已经退出登录，请重新登陆', '登录超时', {

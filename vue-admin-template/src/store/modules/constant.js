@@ -5,15 +5,15 @@ const state = {
   question: {
     // 题型与对应的标志关系
     types: [
-      { type: 'single', name: '单选题' },
-      { type: 'multiple', name: '多选题' },
-      { type: 'judge', name: '判断题' },
-      { type: 'completion', name: '填空题' },
-      { type: 'essay', name: '问答题' }
+      { type: 'singles', name: '单选题' },
+      { type: 'multiples', name: '多选题' },
+      { type: 'judges', name: '判断题' },
+      { type: 'completions', name: '填空题' },
+      { type: 'essays', name: '问答题' }
     ],
     // 每个的题型的存储格式
     content: {
-      single: {
+      singles: {
         score: '',
         content: '',
         A: '',
@@ -22,7 +22,7 @@ const state = {
         D: '',
         rightKey: ''
       },
-      multiple: {
+      multiples: {
         score: '',
         content: '',
         A: '',
@@ -33,18 +33,18 @@ const state = {
         F: '',
         rightKey: ''
       },
-      judge: {
+      judges: {
         score: '',
         content: '',
         rightKey: ''
       },
-      completion: {
+      completions: {
         score: '',
         content: '',
         spaceNumber: '',
         rightKey: ''
       },
-      essay: {
+      essays: {
         score: '',
         content: '',
         rightKey: ''
@@ -72,7 +72,12 @@ const state = {
   // 选择题选项
   selectOptions: ['A', 'B', 'C', 'D', 'E', 'F'],
   // 判断题选项
-  judgeOptions: ['正确', '错误']
+  judgeOptions: ['正确', '错误'],
+  // 试卷发布状态
+  publishState: [
+    { label: '未发布', value: false },
+    { label: '已发布', value: true }
+  ]
 }
 
 const mutations = {}

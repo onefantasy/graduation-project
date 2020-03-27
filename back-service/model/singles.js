@@ -13,12 +13,12 @@ const singles = sequelize.define('singles', {
   },
   paperId: Sequelize.STRING,
   state: Sequelize.STRING,
-  content: Sequelize.TEXT,
+  content: Sequelize.TEXT('long'),
   score: Sequelize.INTEGER,
-  A: Sequelize.TEXT,
-  B: Sequelize.TEXT,
-  C: Sequelize.TEXT,
-  D: Sequelize.TEXT,
+  A: Sequelize.TEXT('long'),
+  B: Sequelize.TEXT('long'),
+  C: Sequelize.TEXT('long'),
+  D: Sequelize.TEXT('long'),
   rightKey: Sequelize.STRING,
   // 试题在试卷中的序号
   orderNumber: Sequelize.INTEGER

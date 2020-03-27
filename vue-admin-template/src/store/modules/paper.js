@@ -2,7 +2,8 @@ import {
   createPaper,
   getPapers,
   deletePaper,
-  getPaperDetail
+  getPaperDetail,
+  changePublish
 } from '@/api/paper'
 
 const actions = {
@@ -47,6 +48,12 @@ const actions = {
         reject(err)
       })
     })
+  },
+
+  // 更改试卷发布状态
+  async changePublish(ctx, data) {
+    const res = await changePublish(data)
+    return res
   }
 }
 

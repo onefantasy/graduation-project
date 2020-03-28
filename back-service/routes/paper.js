@@ -5,12 +5,13 @@ const moment = require('moment')
 
 // 数据库操作
 const papers = require('../model/papers')
+const users = require('../model/users')
 const Op = require('sequelize').Op
 
 router.prefix('/paper')
 
 router.get('/', async (ctx, next) => {
-  ctx.body = 'this is a users response!'
+  ctx.body = 'this is a paper response!'
 })
 
 // 创建试卷
@@ -92,12 +93,20 @@ router.post('/detelePaper', async (ctx, next) => {
 // 根据试卷id获取试卷信息
 router.get('/getPaperDetail', async (ctx, next) => {
   const params = ctx.query
-  const where = { paperId: params.paperId }
-  const data = await papers.findOne({ where })
+  papers.belongsTo(users, { foreignKey: 'account' })
+  params.publish && (params.publish = params.publish.trim() === 'true')
+  const where = params
+  const data = await papers.findOne({ 
+    where,
+    include: {
+      model: users,
+      attributes: ['name', 'school', 'major', 'class', 'headIcon']
+    }
+  })
   ctx.body = {
     code: data ? 200 : 103,
     data: { config: data },
-    message: data ? '查询成功' : '试卷信息获取失败，请稍后重试'
+    message: data ? '查询成功' : '查询失败'
   }
 })
 

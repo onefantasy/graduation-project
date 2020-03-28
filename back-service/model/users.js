@@ -1,3 +1,4 @@
+// 用户信息记录表
 const sequelize = require('../sequelize')
 const Sequelize = require('sequelize')
 

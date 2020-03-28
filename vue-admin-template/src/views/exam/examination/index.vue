@@ -1,0 +1,223 @@
+<template>
+  <div class="examination-box">
+    <!-- 全屏组件，用于开启全屏和关闭全屏功能 开始 -->
+    <div v-show="false">
+      <screenfull id="screenfull" ref="screenfull" class="right-menu-item hover-effect" />
+    </div>
+    <!-- 全屏组件，用于开启全屏和关闭全屏功能 结束 -->
+
+    <!-- 试卷标题 开始 -->
+    <div class="tc"><h2>{{ config.paperTitle }}</h2></div>
+    <div class="tc"><span>试卷总分:{{ config.totalScore }}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>考试时间:{{ config.time }}</span></div>
+    <div class="mt10 mb10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ config.text }}</div>
+    <!-- 试卷标题 结束 -->
+
+    <el-container>
+      <!-- 题目侧边栏 开始 -->
+      <el-aside width="200px">
+        <el-scrollbar style="height: 100%;">
+          <el-menu style="border: 0;" :default-active="currentQuestionIndex" :unique-opened="true" @select="selectMenuItem">
+            <el-submenu v-for="item of questionList" :key="item.index" :index="item.index">
+              <template slot="title"><i class="el-icon-s-promotion" />{{ `${ item.index }、${ item.name }(${ config[item.type + 'Score'] }分)` }}</template>
+              <el-menu-item v-for="unit of item.number" :key="unit" :index="`${ item.type }-${ unit }`">题目{{ unit }}</el-menu-item>
+            </el-submenu>
+          </el-menu>
+        </el-scrollbar>
+      </el-aside>
+      <!-- 题目侧边栏 结束 -->
+
+      <!-- 编辑试卷题目 开始 -->
+      <el-container>
+        <el-main>
+          <div style="padding: 0 20px 0 100px;">
+            <el-button icon="el-icon-arrow-left" :disabled="questionsIndex.indexOf(currentQuestionIndex) === 0" @click="preQuestion">上一题</el-button>
+            <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
+            <!-- <el-button icon="el-icon-finished" type="primary" class="fr" @click="saveQuestion">保存</el-button> -->
+          </div>
+        </el-main>
+      </el-container>
+      <!-- 编辑试卷题目 结束 -->
+    </el-container>
+  </div>
+</template>
+
+<script>
+import screenfull from '@/components/Screenfull'
+export default {
+  components: {
+    screenfull
+  },
+  data() {
+    return {
+      // 试卷配置
+      config: {},
+
+      // 大写中文序号
+      chineseOrderNumber: [],
+
+      // 题型与对应的标志
+      questionTypes: [],
+
+      // 试题索引合集
+      questionsIndex: [],
+
+      // 当前考试的试题的索引
+      currentQuestionIndex: '',
+
+      // 试题列表
+      questionList: [],
+
+      // 考试作答内容的存储格式
+      answer: {},
+
+      // 存储所有考试记录的数组
+      answers: []
+    }
+  },
+  created() {
+    // 获取中文序号
+    this.chineseOrderNumber = this.$store.getters.constant.chineseOrderNumber
+    // 获取题型与其对应标志
+    this.questionTypes = this.$store.getters.constant.question.types
+    // 获取考试回答内容的存储格式
+    this.answer = this.$store.getters.constant.answer
+
+    // 获取试卷信息
+    this.getPaperDetail()
+  },
+  mounted() {
+    // if (!this.$refs['screenfull'].isFullscreen) {
+    //   // 如果不是全屏，则开启全屏模式
+    //   this.$refs['screenfull'].click()
+    // }
+  },
+  methods: {
+    // 根据试卷id获取试卷详情
+    getPaperDetail() {
+      // 参数
+      const params = {
+        paperId: this.$route.query.paperId
+      }
+      // 发起请求
+      this.$store.dispatch('paper/getPaperDetail', params).then(res => {
+        this.config = res.data.config
+        // 初始化试题列表
+        this.initQuestionList()
+        // 获取该试卷的试卷试题
+        this.getPaperQuestions()
+      }).catch(() => {
+        this.$message.error('试卷信息获取失败，请稍后重试')
+        this.$router.go(-1)
+      })
+    },
+    // 根据试卷id获取该试卷的所有试题
+    getPaperQuestions() {
+      this.$store.dispatch('question/getPaperQuestions', { paperId: this.$route.query.paperId }).then(res => {
+        // 将请求到试题生成试卷
+      })
+    },
+    // 初始化试题列表
+    initQuestionList() {
+      // 初始化试题索引合集
+      this.questionsIndex = []
+      let index = 0
+      this.questionList = this.questionTypes.filter(item => {
+        return this.config[item.type]
+      }).map(item => {
+        const unit = {
+          index: this.chineseOrderNumber[index],
+          name: item.name,
+          type: item.type,
+          number: this.config[item.type]
+        }
+        // 生成试题索引合集
+        for (let i = 1; i <= unit.number; i++) {
+          this.questionsIndex.push(`${unit.type}-${i}`)
+        }
+        index++
+        return unit
+      })
+      // 初始化选中的题目
+      this.selectMenuItem(this.questionsIndex[0])
+    },
+    // 选中试题列表中的某一项
+    async selectMenuItem(e) {
+      // const arr = e.split('-')
+      // 更改指定题目
+      this.currentQuestionIndex = e
+    },
+    // 上一题
+    preQuestion() {
+      const index = this.questionsIndex.indexOf(this.currentQuestionIndex) - 1
+      // 索引出错处理
+      if (index < 0) {
+        this.$message.error('索引出错，请刷新页面重试！')
+        return false
+      }
+      // 题目跳转
+      this.selectMenuItem(this.questionsIndex[index])
+    },
+    // 下一题
+    nextQuestion() {
+      const index = this.questionsIndex.indexOf(this.currentQuestionIndex) + 1
+      // 索引出错处理
+      if (index >= this.questionsIndex.length) {
+        this.$message.error('索引出错，请刷新页面重试！')
+        return false
+      }
+      // 题目跳转
+      this.selectMenuItem(this.questionsIndex[index])
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.examination-box {
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
+  .el-menu-item.is-active,
+  .el-menu-item:hover,
+  .el-menu-item:active,
+  .el-menu-item:focus {
+    background: rgba(64, 158, 255, .2);
+    border: 1px solid rgb(64,158,255);
+    border-radius: 20px;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.examination-box {
+  padding: 20px;
+
+  .flex-box {
+    display: flex;
+    line-height: 40px;
+
+    .score-input {
+      width: 200px;
+    }
+  }
+
+  .tc {
+    text-align: center;
+  }
+  .mt10 {
+    margin-top: 10px;
+  }
+
+  .question-item {
+    margin: 10px 0;
+  }
+
+  .mb10 {
+    margin-bottom: 10px;
+  }
+
+  .fr {
+    float: right;
+  }
+}
+</style>

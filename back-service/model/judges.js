@@ -1,3 +1,4 @@
+// 判断题表
 const sequelize = require('../sequelize')
 const Sequelize = require('sequelize')
 

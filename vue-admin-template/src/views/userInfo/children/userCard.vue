@@ -4,7 +4,11 @@
       <span class="user-title">关于我</span>
     </div>
     <div class="user-headIcon">
-      <img :src="userInfo.headIcon || defaultHeadIcon">
+      <el-image :src="userInfo.headIcon || defaultHeadIcon" :preview-src-list="[userInfo.headIcon || defaultHeadIcon]">
+        <div slot="error" class="image-slot">
+          <i class="el-icon-picture-outline" />
+        </div>
+      </el-image>
     </div>
     <div class="middle">
       <div class="name">{{ userInfo.name }}</div>
@@ -46,7 +50,7 @@ export default {
   data() {
     return {
       // 默认头像
-      defaultHeadIcon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      defaultHeadIcon: ''
     }
   },
   computed: {
@@ -54,6 +58,10 @@ export default {
     userInfo() {
       return this.$store.getters.userInfo
     }
+  },
+  created() {
+    // 从仓库获取默认头像
+    this.defaultHeadIcon = this.$store.getters.constant.defaultHeadIcon
   },
   methods: {}
 }

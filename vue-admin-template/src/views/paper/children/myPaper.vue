@@ -108,7 +108,10 @@
 </template>
 
 <script>
+// 导入混入文件
+import fun from '@/mixin/fun'
 export default {
+  mixins: [fun],
   data() {
     return {
       // 当前表格的页码
@@ -168,14 +171,6 @@ export default {
           this.$message.warning('暂无试卷信息！')
         }
       })
-    },
-    // 计算表格序号
-    computedIndex(index) {
-      return (this.page - 1) * this.pageSize + index + 1
-    },
-    // 格式化时间
-    formatTime(time) {
-      return this.$moment(time).format('YYYY-MM-DD HH:mm:ss')
     },
     // 查看试卷说明
     watchText(text) {

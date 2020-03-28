@@ -84,6 +84,27 @@ export const constantRoutes = [
   },
 
   {
+    path: '/exam',
+    component: Layout,
+    meta: { title: '考试', icon: 'example' },
+    children: [
+      {
+        path: 'searchPaper',
+        name: 'SearchPaper',
+        component: () => import('@/views/exam/searchPaper'),
+        meta: { title: '查找试卷' }
+      },
+      {
+        path: 'examination',
+        name: 'Examination',
+        component: () => import('@/views/exam/examination'),
+        meta: { title: '考试' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
     path: '/question',
     component: Layout,
     meta: { title: '我的试题', icon: 'nested' },

@@ -32,7 +32,16 @@
           <div style="padding: 0 20px 0 100px;">
             <el-button icon="el-icon-arrow-left" :disabled="questionsIndex.indexOf(currentQuestionIndex) === 0" @click="preQuestion">上一题</el-button>
             <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
-            <!-- <el-button icon="el-icon-finished" type="primary" class="fr" @click="saveQuestion">保存</el-button> -->
+            <el-button icon="el-icon-finished" type="primary" class="fr" @click="submitPaper">交卷</el-button>
+          </div>
+          <div style="padding: 0 20px 0 100px;">
+            <question
+              v-if="questions[currentType]"
+              :issue="questions[currentType][currentIndex]"
+              :type="currentType"
+              :index="+currentIndex"
+              :answers="answers"
+            />
           </div>
         </el-main>
       </el-container>
@@ -43,9 +52,11 @@
 
 <script>
 import screenfull from '@/components/Screenfull'
+import question from '../children/question'
 export default {
   components: {
-    screenfull
+    screenfull,
+    question
   },
   data() {
     return {
@@ -70,8 +81,20 @@ export default {
       // 考试作答内容的存储格式
       answer: {},
 
-      // 存储所有考试记录的数组
-      answers: []
+      // 当前正在作答的试题类型
+      currentType: '',
+
+      // 当前正在作答的试题的索引
+      currentIndex: 1,
+
+      // 该试卷所有试题的合集
+      questions: {},
+
+      // 考试作答记录
+      answers: {},
+
+      // 考试者
+      account: ''
     }
   },
   created() {
@@ -81,6 +104,9 @@ export default {
     this.questionTypes = this.$store.getters.constant.question.types
     // 获取考试回答内容的存储格式
     this.answer = this.$store.getters.constant.answer
+
+    // 当前用户信息
+    this.account = this.$store.getters.userInfo.account
 
     // 获取试卷信息
     this.getPaperDetail()
@@ -101,8 +127,6 @@ export default {
       // 发起请求
       this.$store.dispatch('paper/getPaperDetail', params).then(res => {
         this.config = res.data.config
-        // 初始化试题列表
-        this.initQuestionList()
         // 获取该试卷的试卷试题
         this.getPaperQuestions()
       }).catch(() => {
@@ -112,8 +136,30 @@ export default {
     },
     // 根据试卷id获取该试卷的所有试题
     getPaperQuestions() {
-      this.$store.dispatch('question/getPaperQuestions', { paperId: this.$route.query.paperId }).then(res => {
+      const paperId = this.$route.query.paperId
+      this.$store.dispatch('question/getPaperQuestions', { paperId, type: 'exam' }).then(res => {
+        const data = res.data
         // 将请求到试题生成试卷
+        for (const key in data) {
+          data[key].map(item => {
+            // 作答记录格式
+            this.answers[key] || (this.answers[key] = [])
+            this.answers[key][item.orderNumber] = {
+              paperId,
+              qid: item.qid,
+              account: this.account,
+              mineAnswer: '',
+              isTrue: '',
+              score: item.score,
+              questionType: key
+            }
+            // 试题
+            this.questions[key] || (this.questions[key] = [])
+            this.questions[key][item.orderNumber] = item
+          })
+        }
+        // 初始化试题列表
+        this.initQuestionList()
       })
     },
     // 初始化试题列表
@@ -142,7 +188,9 @@ export default {
     },
     // 选中试题列表中的某一项
     async selectMenuItem(e) {
-      // const arr = e.split('-')
+      const arr = e.split('-')
+      this.currentType = arr[0]
+      this.currentIndex = arr[1]
       // 更改指定题目
       this.currentQuestionIndex = e
     },
@@ -167,6 +215,10 @@ export default {
       }
       // 题目跳转
       this.selectMenuItem(this.questionsIndex[index])
+    },
+    // 交卷
+    submitPaper() {
+      console.log('试卷答案:', this.answers)
     }
   }
 }

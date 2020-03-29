@@ -64,10 +64,12 @@ router.post('/save', async (ctx, next) => {
 router.get('/getPaperQuestions', async (ctx, next) => {
   // 所有试题类型的表格
   const tables = Object.keys(questions)
-  const where = ctx.query
+  const where = { paperId: ctx.query.paperId }
+  const params = { where }
+  ctx.query.type === 'exam' && ( params.attributes = { exclude: ['rightKey'] } )
   const data = {}
   for (let item of tables) {
-    const res = await questions[item].findAll({ where })
+    const res = await questions[item].findAll(params)
     res.length && (data[item] = res)
   }
   ctx.body = {

@@ -86,14 +86,14 @@ const state = {
     qid: '',
     // 考试者账号
     account: '',
-    // 正确答案
-    rightKey: '',
     // 考试者的答案
     mineAnswer: '',
     // 回答是否正确
     isTrue: '',
     // 得分
-    score: ''
+    score: '',
+    // 试题类型
+    questionType: ''
   },
   // 默认头像
   defaultHeadIcon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'

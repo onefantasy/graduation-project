@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       // 用于查询的试卷编号
-      paperId: 'p1585290610394',
+      paperId: 'p1585235112914',
 
       // 搜索获得的试卷信息
       paperInfo: {},

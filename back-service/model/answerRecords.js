@@ -17,7 +17,15 @@ const answerRecords = sequelize.define('answerRecords', {
   // 试卷id
   paperId: Sequelize.STRING,
   // 题型
-  questionType: Sequelize.STRING
+  questionType: Sequelize.STRING,
+  // 试题id
+  qid: Sequelize.STRING,
+  // 考试者的答案
+  mineAnswer: Sequelize.STRING,
+  // 回答是否正确
+  isTrue: Sequelize.BOOLEAN,
+  // 得分
+  score: Sequelize.INTEGER
 }, { freezeTableName: true })
 
 module.exports = answerRecords

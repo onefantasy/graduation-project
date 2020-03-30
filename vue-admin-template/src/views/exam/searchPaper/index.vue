@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       // 用于查询的试卷编号
-      paperId: 'p1585235112914',
+      paperId: 'p1585290610394',
 
       // 搜索获得的试卷信息
       paperInfo: {},
@@ -130,7 +130,17 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$router.push('/exam/examination?paperId=' + this.paperInfo.paperId)
+        // this.$router.push('/exam/examination?paperId=' + this.paperInfo.paperId)
+      //   const data = {
+      //     paperId: this.paperInfo.paperId,
+      //     account: this.$store.getters.userInfo.account,
+      //     startExam: this.$moment().format('YYYY-MM-DD HH:mm:ss')
+      //   }
+      //   return this.$store.dispatch('exam/startExam', data)
+      // }).then(res => {
+        // 测试用的eid e1585548598871
+        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
+        this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1585548598871`)
       }).catch(() => {})
     }
   }

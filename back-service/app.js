@@ -21,6 +21,7 @@ const users = require('./routes/users')
 const image = require('./routes/image')
 const paper = require('./routes/paper')
 const question = require('./routes/question')
+const exam = require('./routes/exam')
 
 // 决解跨域以及options请求
 app.use(
@@ -93,6 +94,7 @@ app.use(users.routes(), users.allowedMethods())
 app.use(image.routes(), image.allowedMethods())
 app.use(paper.routes(), paper.allowedMethods())
 app.use(question.routes(), question.allowedMethods())
+app.use(exam.routes(), exam.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

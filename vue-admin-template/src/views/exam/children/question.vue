@@ -155,7 +155,7 @@ export default {
     },
     // 多选 选择事件
     changeCheckbox(e) {
-      this.answers[this.type][this.index].mineAnswer = e.join('')
+      this.answers[this.type][this.index].mineAnswer = e.sort().join('')
     },
     // 判断题答案
     changeJudge(e) {
@@ -163,7 +163,7 @@ export default {
     },
     // 填空题答案
     changeCompletion() {
-      this.answers[this.type][this.index].mineAnswer = this.completions.join(' ')
+      this.answers[this.type][this.index].mineAnswer = this.completions.map(item => item.trim()).join(' ')
     },
     // 问答题答案
     changeTextarea(e) {

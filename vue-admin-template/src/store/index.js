@@ -11,6 +11,7 @@ import permission from './base_modules/permission'
 import paper from './modules/paper'
 import constant from './modules/constant'
 import question from './modules/question'
+import exam from './modules/exam'
 
 Vue.use(Vuex)
 
@@ -23,7 +24,8 @@ const store = new Vuex.Store({
     permission,
     paper,
     constant,
-    question
+    question,
+    exam
   },
   getters
 })

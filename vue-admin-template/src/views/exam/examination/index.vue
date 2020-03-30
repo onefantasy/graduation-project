@@ -1,5 +1,5 @@
 <template>
-  <div class="examination-box">
+  <div ref="examination" class="examination-box">
     <!-- 全屏组件，用于开启全屏和关闭全屏功能 开始 -->
     <div v-show="false">
       <screenfull id="screenfull" ref="screenfull" class="right-menu-item hover-effect" />
@@ -7,15 +7,17 @@
     <!-- 全屏组件，用于开启全屏和关闭全屏功能 结束 -->
 
     <!-- 试卷标题 开始 -->
-    <div class="tc"><h2>{{ config.paperTitle }}</h2></div>
-    <div class="tc"><span>试卷总分:{{ config.totalScore }}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>考试时间:{{ config.time }}</span></div>
-    <div class="mt10 mb10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ config.text }}</div>
+    <div>
+      <div class="tc"><h2>{{ config.paperTitle }}</h2></div>
+      <div class="tc"><span>试卷总分:{{ config.totalScore }}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>考试时间:{{ config.time }}</span></div>
+      <div class="mt10 mb10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ config.text }}</div>
+    </div>
     <!-- 试卷标题 结束 -->
 
     <el-container>
       <!-- 题目侧边栏 开始 -->
       <el-aside width="200px">
-        <el-scrollbar style="height: 100%;">
+        <el-scrollbar style="height: 500px">
           <el-menu style="border: 0;" :default-active="currentQuestionIndex" :unique-opened="true" @select="selectMenuItem">
             <el-submenu v-for="item of questionList" :key="item.index" :index="item.index">
               <template slot="title"><i class="el-icon-s-promotion" />{{ `${ item.index }、${ item.name }(${ config[item.type + 'Score'] }分)` }}</template>
@@ -31,8 +33,9 @@
         <el-main>
           <div style="padding: 0 20px 0 100px;">
             <el-button icon="el-icon-arrow-left" :disabled="questionsIndex.indexOf(currentQuestionIndex) === 0" @click="preQuestion">上一题</el-button>
+            <timer v-if="config.time" class="timer" :time="config.time" @timeout="submitPaper(true)" />
             <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
-            <el-button icon="el-icon-finished" type="primary" class="fr" @click="submitPaper">交卷</el-button>
+            <el-button icon="el-icon-finished" type="primary" class="fr" style="margin-right: 10px;" @click="submitPaper(false)">交卷</el-button>
           </div>
           <div style="padding: 0 20px 0 100px;">
             <question
@@ -51,12 +54,15 @@
 </template>
 
 <script>
+import { grading } from '@/utils/grade'
 import screenfull from '@/components/Screenfull'
 import question from '../children/question'
+import timer from '../children/timer'
 export default {
   components: {
     screenfull,
-    question
+    question,
+    timer
   },
   data() {
     return {
@@ -94,7 +100,10 @@ export default {
       answers: {},
 
       // 考试者
-      account: ''
+      account: '',
+
+      // 加载遮罩
+      load: null
     }
   },
   created() {
@@ -108,6 +117,8 @@ export default {
     // 当前用户信息
     this.account = this.$store.getters.userInfo.account
 
+    // 开启加载遮罩
+    this.openLoad()
     // 获取试卷信息
     this.getPaperDetail()
   },
@@ -118,6 +129,14 @@ export default {
     // }
   },
   methods: {
+    // 开启遮罩
+    openLoad() {
+      this.load = this.$loading({ target: this.$refs['examination'] })
+    },
+    // 关闭遮罩
+    closeLoad() {
+      if (this.load) this.load.close()
+    },
     // 根据试卷id获取试卷详情
     getPaperDetail() {
       // 参数
@@ -132,11 +151,13 @@ export default {
       }).catch(() => {
         this.$message.error('试卷信息获取失败，请稍后重试')
         this.$router.go(-1)
+        this.closeLoad()
       })
     },
     // 根据试卷id获取该试卷的所有试题
     getPaperQuestions() {
       const paperId = this.$route.query.paperId
+      const eid = this.$route.query.e
       this.$store.dispatch('question/getPaperQuestions', { paperId, type: 'exam' }).then(res => {
         const data = res.data
         // 将请求到试题生成试卷
@@ -150,8 +171,9 @@ export default {
               account: this.account,
               mineAnswer: '',
               isTrue: '',
-              score: item.score,
-              questionType: key
+              score: 0,
+              questionType: key,
+              eid
             }
             // 试题
             this.questions[key] || (this.questions[key] = [])
@@ -160,6 +182,8 @@ export default {
         }
         // 初始化试题列表
         this.initQuestionList()
+      }).finally(() => {
+        this.closeLoad()
       })
     },
     // 初始化试题列表
@@ -217,8 +241,30 @@ export default {
       this.selectMenuItem(this.questionsIndex[index])
     },
     // 交卷
-    submitPaper() {
-      console.log('试卷答案:', this.answers)
+    async submitPaper(bool) {
+      let flag = false
+      if (!bool) {
+        // bool 为true时，表示超时交卷,不需要提醒
+        await this.$confirm('确定要交卷吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          flag = false
+        }).catch(() => {
+          flag = true
+        })
+      }
+      if (flag) return false
+
+      // 开始评分
+      this.$store.dispatch('question/getPaperQuestions', { paperId: this.$route.query.paperId }).then(res => {
+        // 获取这张试卷的所有正确答案
+        console.log('正确答案：', res.data)
+        console.log('应试者答案：', this.answers)
+        // 调用评分函数
+        const data = grading(res.data, this.answers)
+      }).catch(() => {})
     }
   }
 }
@@ -270,6 +316,11 @@ export default {
 
   .fr {
     float: right;
+  }
+
+  // 计时器与交卷按钮
+  .timer {
+    display: inline-block;
   }
 }
 </style>

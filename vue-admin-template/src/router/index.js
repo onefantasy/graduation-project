@@ -100,6 +100,13 @@ export const constantRoutes = [
         component: () => import('@/views/exam/examination'),
         meta: { title: '考试' },
         hidden: true
+      },
+      {
+        path: 'examDetail',
+        name: 'ExamDetail',
+        component: () => import('@/views/exam/examDetail'),
+        meta: { title: '考试详情' },
+        hidden: true
       }
     ]
   },

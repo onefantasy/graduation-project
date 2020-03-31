@@ -33,7 +33,7 @@
         <el-main>
           <div style="padding: 0 20px 0 100px;">
             <el-button icon="el-icon-arrow-left" :disabled="questionsIndex.indexOf(currentQuestionIndex) === 0" @click="preQuestion">上一题</el-button>
-            <timer v-if="config.time" class="timer" :time="config.time" @timeout="submitPaper(true)" />
+            <timer v-if="config.time" ref="timer" class="timer" :time="config.time" @timeout="submitPaper(true)" />
             <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
             <el-button icon="el-icon-finished" type="primary" class="fr" style="margin-right: 10px;" @click="submitPaper(false)">交卷</el-button>
           </div>
@@ -257,13 +257,25 @@ export default {
       }
       if (flag) return false
 
-      // 开始评分
+      // 记录评分结果
+      let data = null
+
+      // 获取这张试卷的所有正确答案
       this.$store.dispatch('question/getPaperQuestions', { paperId: this.$route.query.paperId }).then(res => {
-        // 获取这张试卷的所有正确答案
-        console.log('正确答案：', res.data)
-        console.log('应试者答案：', this.answers)
         // 调用评分函数
-        const data = grading(res.data, this.answers)
+        data = grading(res.data, this.answers)
+        data.score.eid = this.$route.query.e
+        data.score.endExam = this.$moment().format('YYYY-MM-DD HH:mm:ss')
+        data.score.timeExam = this.$refs['timer'].getUsedTime()
+        return this.$store.dispatch('exam/endExam', data.score)
+      }).then(res => {
+        this.$store.dispatch('answer/saveAnswerRecords', { records: data.answerArr })
+      }).then(res => {
+        // 删除当前页面的affix
+        this.$store.commit('tagsView/DEL_VISITED_VIEW', this.$route)
+        this.$message.success('交卷成功！')
+        // 进行路由跳转
+        this.$router.push('/dashboard')
       }).catch(() => {})
     }
   }

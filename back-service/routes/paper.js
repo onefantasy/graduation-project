@@ -53,7 +53,7 @@ router.post('/create', async (ctx, next) => {
   }
 })
 
-// 查询试卷列表（包括考过的和创建的）
+// 查询试卷列表（创建的）
 router.get('/getPapers', async (ctx, next) => {
   const params = ctx.query
   const searchArr = ['paperId', 'paperTitle', 'subject']
@@ -113,7 +113,6 @@ router.get('/getPaperDetail', async (ctx, next) => {
 // 改变试卷的发布状态
 router.post('/changePublish', async (ctx, next) => {
   const params = ctx.request.body
-  console.log('接收到到参数：', params)
   const res = await papers.update({ publish: !params.publish }, { where: { paperId: params.paperId, account: ctx.account } })
   ctx.body = {
     code: res ? 200 : 103,

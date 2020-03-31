@@ -19,6 +19,10 @@ const examRecords = sequelize.define('examRecords', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  // 试卷标题
+  paperTitle: Sequelize.STRING,
+  // 科目
+  subject: Sequelize.STRING,
   // 开始考试时间
   startExam: Sequelize.STRING,
   // 结束考试时间

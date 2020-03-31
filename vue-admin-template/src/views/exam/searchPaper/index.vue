@@ -130,17 +130,18 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // this.$router.push('/exam/examination?paperId=' + this.paperInfo.paperId)
-      //   const data = {
-      //     paperId: this.paperInfo.paperId,
-      //     account: this.$store.getters.userInfo.account,
-      //     startExam: this.$moment().format('YYYY-MM-DD HH:mm:ss')
-      //   }
-      //   return this.$store.dispatch('exam/startExam', data)
-      // }).then(res => {
+        const data = {
+          paperId: this.paperInfo.paperId,
+          account: this.$store.getters.userInfo.account,
+          startExam: this.$moment().format('YYYY-MM-DD HH:mm:ss'),
+          paperTitle: this.paperInfo.paperTitle,
+          subject: this.paperInfo.subject
+        }
+        return this.$store.dispatch('exam/startExam', data)
+      }).then(res => {
+        this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
         // 测试用的eid e1585548598871
-        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
-        this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1585548598871`)
+        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1585548598871`)
       }).catch(() => {})
     }
   }

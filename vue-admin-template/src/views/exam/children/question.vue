@@ -40,7 +40,7 @@
         <!-- 判断题选项 结束-->
         <!-- 填空题 开始 -->
         <div v-else-if="type === questionTypes[3].type">
-          <el-input v-for="item in issue.spaceNumber" :key="item" v-model="completions[item]" style="margin-bottom: 5px;" @input="changeCompletion" />
+          <el-input v-for="item in issue.spaceNumber" :key="item" v-model="completions[item - 1]" style="margin-bottom: 5px;" @input="changeCompletion" />
         </div>
         <!-- 填空题 结束 -->
         <!-- 问答题 开始 -->

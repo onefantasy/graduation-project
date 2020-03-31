@@ -12,6 +12,7 @@ import paper from './modules/paper'
 import constant from './modules/constant'
 import question from './modules/question'
 import exam from './modules/exam'
+import answer from './modules/answer'
 
 Vue.use(Vuex)
 
@@ -25,7 +26,8 @@ const store = new Vuex.Store({
     paper,
     constant,
     question,
-    exam
+    exam,
+    answer
   },
   getters
 })

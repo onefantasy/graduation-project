@@ -51,7 +51,7 @@ export function grading(rightArr, mineArr) {
         break
     }
     score.scoreExam += res.score
-    score[keys[i] + 'EXam'] = res.score
+    score[keys[i] + 'Exam'] = res.score
     answerArr = answerArr.concat(res.arr)
   }
 

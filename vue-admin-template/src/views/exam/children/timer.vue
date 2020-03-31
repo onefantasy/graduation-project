@@ -28,6 +28,9 @@ export default {
         { color: '#6f7ad3', percentage: 100 }
       ],
 
+      // 全部时间
+      allTime: 0,
+
       // 倒计时的毫秒数
       seconds: 0,
 
@@ -55,14 +58,15 @@ export default {
     initSecond() {
       const arr = this.time.split(':')
       this.seconds = (+arr[0]) * 60 * 60 + (+arr[1]) * 60 + (+arr[2])
+      this.allTime = this.seconds
       this.tipTime = this.seconds * 0.20
     },
     // 将秒数转化为时，分，秒
-    formatTime() {
+    formatTime(seconds) {
       const arr = []
-      arr[0] = parseInt(this.seconds / 3600)
-      arr[1] = parseInt((this.seconds - arr[0] * 3600) / 60)
-      arr[2] = this.seconds % 60
+      arr[0] = parseInt(seconds / 3600)
+      arr[1] = parseInt((seconds - arr[0] * 3600) / 60)
+      arr[2] = seconds % 60
       for (let i = 0; i < arr.length; i++) {
         arr[i] > 9 || (arr[i] = '0' + arr[i])
       }
@@ -80,6 +84,10 @@ export default {
           this.seconds--
         }
       }, 1000)
+    },
+    // 获取已经经过的时间
+    getUsedTime() {
+      return this.formatTime(this.allTime - this.seconds + 1)
     }
   }
 }

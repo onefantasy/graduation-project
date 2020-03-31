@@ -158,7 +158,7 @@ export default {
     // 显示当前得分
     showScore(score) {
       if (score !== 0 && !score) {
-        return '尚未批改此题'
+        return '尚未批改'
       }
       return score
     },

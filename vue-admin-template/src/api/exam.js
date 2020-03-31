@@ -26,3 +26,12 @@ export function getExamedPaper(params) {
     params
   })
 }
+
+// 根据用户某次考试的详情
+export function getExamRecordByAP(data) {
+  return request({
+    url: '/exam/getExamRecordByAP',
+    method: 'post',
+    data
+  })
+}

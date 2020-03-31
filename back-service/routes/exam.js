@@ -57,7 +57,6 @@ router.post('/endExam', async (ctx, next) => {
     return false
   }
   // 开始更新
-  console.log('结束考试参数：', params)
   const res = await data.update(params)
   ctx.body = {
     code: res ? 200 : 103,
@@ -98,6 +97,46 @@ router.get('/getExamedPaper', async (ctx, next) => {
     message: flag ? '查询成功' : '查询失败,请稍后重试',
     data,
     total
+  }
+})
+
+// 获取某个用户在某张试卷上的考试记录
+router.post('/getExamRecordByAP', async (ctx, next) => {
+  const params = ctx.request.body
+  console.log('接收到的参数：', params)
+  const where = { paperId: params.paperId }
+  const data = await exam.findAll({ where }, {
+    order: [
+      ['scoreExam', 'DESc']
+    ]
+  })
+  // 本张试卷记录条数
+  const recordNumber = data.length
+  // 排名
+  let orderNumber = 0
+  // 需要取出的数据
+  let target = ''
+
+  // 便利所有记录找出自己需要的记录
+  for (let i = 0; i < recordNumber; i++) {
+    console.log('data.eid: ', data[i].eid)
+    console.log('params.eid: ', params.eid)
+    console.log('i: ', i)
+    if (data[i].eid === params.eid) {
+      target = data[i]
+      orderNumber = i + 1
+      break
+    }
+  }
+
+  ctx.body = {
+    code: orderNumber ? 200 : 103,
+    message: orderNumber ? '查询成功' : '查询失败',
+    data: {
+      target,
+      orderNumber,
+      recordNumber
+    }
   }
 })
 

@@ -55,6 +55,16 @@ export function grading(rightArr, mineArr) {
     answerArr = answerArr.concat(res.arr)
   }
 
+  // 将问答题也一起保存
+  for (let i = 0, l = notGrade.length; i < l; i++) {
+    const target = mineArr[notGrade[i]]
+    for (let j = 0, size = target.length; j < size; j++) {
+      // 删除掉是否正确的标志，否则存入数据库会报错
+      delete target[j].isTrue
+    }
+    answerArr = answerArr.concat(target)
+  }
+
   return { score, answerArr }
 }
 

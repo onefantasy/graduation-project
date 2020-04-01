@@ -141,7 +141,7 @@ export default {
       }).then(res => {
         this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
         // 测试用的eid e1585548598871
-        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1585548598871`)
+        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1585642698213`)
       }).catch(() => {})
     }
   }

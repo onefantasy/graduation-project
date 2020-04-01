@@ -8,3 +8,12 @@ export function saveAnswerRecords(data) {
     data
   })
 }
+
+// 根据eid获取考试记录
+export function getAnswersByEid(params) {
+  return request({
+    url: '/answer/getAnswersByEid',
+    method: 'get',
+    params
+  })
+}

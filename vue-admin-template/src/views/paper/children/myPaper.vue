@@ -167,9 +167,9 @@ export default {
       this.$store.dispatch('paper/getPapers', params).then(res => {
         this.paperList = res.data
         this.total = res.total
-        if (this.total === 0) {
-          this.$message.warning('暂无试卷信息！')
-        }
+        // if (this.total === 0) {
+        //   this.$message.warning('暂无试卷信息！')
+        // }
       })
     },
     // 查看试卷说明

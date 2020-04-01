@@ -5,7 +5,7 @@
         <span slot="label"><i class="el-icon-document" /> 考过的试卷</span>
         <examed-paper />
       </el-tab-pane>
-      <el-tab-pane label="创建的试卷" name="created">
+      <el-tab-pane v-if="role === 'T'" label="创建的试卷" name="created">
         <span slot="label"><i class="el-icon-edit-outline" /> 创建的试卷</span>
         <my-paper />
       </el-tab-pane>
@@ -25,8 +25,14 @@ export default {
   data() {
     return {
       // 当前选中的tab
-      activeName: 'examed'
+      activeName: 'examed',
+
+      // 当前登录用户角色
+      role: ''
     }
+  },
+  created() {
+    this.role = this.$store.getters.userInfo.role
   }
 }
 </script>

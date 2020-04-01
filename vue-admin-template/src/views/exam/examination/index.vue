@@ -269,7 +269,7 @@ export default {
         data.score.timeExam = this.$refs['timer'].getUsedTime()
         return this.$store.dispatch('exam/endExam', data.score)
       }).then(res => {
-        this.$store.dispatch('answer/saveAnswerRecords', { records: data.answerArr })
+        return this.$store.dispatch('answer/saveAnswerRecords', { records: data.answerArr })
       }).then(res => {
         // 删除当前页面的affix
         this.$store.commit('tagsView/DEL_VISITED_VIEW', this.$route)

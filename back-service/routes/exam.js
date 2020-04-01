@@ -19,7 +19,7 @@ router.post('/startExam',async (ctx, next) => {
   // 查看是否已经考过试
   if (res) { 
     ctx.body = { code: 104, message: '您已经参加过该试卷的考试了' } 
-    return false 
+    return false
   }
   // 创建id
   let flag = true
@@ -64,7 +64,7 @@ router.post('/endExam', async (ctx, next) => {
   }
 })
 
-// 根据用户id获取其的考试记录
+// 根据用户id获取其的考试记录(用于展示在表格中)
 router.get('/getExamedPaper', async (ctx, next) => {
   const params = ctx.query
   console.log('接收的参数：', params)
@@ -100,7 +100,7 @@ router.get('/getExamedPaper', async (ctx, next) => {
   }
 })
 
-// 获取某个用户在某张试卷上的考试记录
+// 获取某个用户在某张试卷上的考试记录(有统计排名，所以不用eid)
 router.post('/getExamRecordByAP', async (ctx, next) => {
   const params = ctx.request.body
   console.log('接收到的参数：', params)

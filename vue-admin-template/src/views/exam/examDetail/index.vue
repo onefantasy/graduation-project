@@ -11,6 +11,10 @@
               <i class="el-icon-picture-outline" />
             </div>
           </el-image>
+          <p>学校：{{ userInfo.school }}</p>
+          <p>专业：{{ userInfo.major }}</p>
+          <p>班级：{{ userInfo.class }}</p>
+          <p>学号：{{ userInfo.number }}</p>
           <h4>试卷得分：{{ showScore(record.target.scoreExam) }} / {{ config.totalScore }}</h4>
           <h4>单选得分：{{ showScore(record.target.singlesExam) }} / {{ config.singlesScore }}</h4>
           <h4>多选得分：{{ showScore(record.target.multiplesExam) }} / {{ config.multiplesScore }}</h4>
@@ -50,8 +54,8 @@
                 <p>分值：{{ unit.score }}</p>
                 <p>标准答案：{{ unit.rightKey }}</p>
                 <p>我的答案：<span :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }">{{ unit.mineAnswer }}</span>
-                  <i v-if="unit.isTrue !== null && unit.isTrue" class="isTrue-tip green el-icon-check" />
-                  <i v-if="unit.isTrue !== null && !unit.isTrue" class="isTrue-tip red el-icon-close" />
+                  <i v-if="!(unit.isTrue == null) && unit.isTrue" class="isTrue-tip green el-icon-check" />
+                  <i v-if="!(unit.isTrue == null) && !unit.isTrue" class="isTrue-tip red el-icon-close" />
                 </p>
               </div>
             </div>

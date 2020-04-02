@@ -35,3 +35,12 @@ export function getExamRecordByAP(data) {
     data
   })
 }
+
+// 根据paperId获取某张试卷的考试整体情况（教师专用接口，用于统计考试情况）
+export function getExamOverallByPid(params) {
+  return request({
+    url: '/exam/getExamOverallByPid',
+    method: 'get',
+    params
+  })
+}

@@ -275,7 +275,7 @@ export default {
         this.$store.commit('tagsView/DEL_VISITED_VIEW', this.$route)
         this.$message.success('交卷成功！')
         // 进行路由跳转
-        this.$router.push('/dashboard')
+        this.$router.push('/paper/mine')
       }).catch(() => {})
     }
   }

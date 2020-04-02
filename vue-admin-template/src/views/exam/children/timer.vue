@@ -54,7 +54,7 @@ export default {
     }
   },
   methods: {
-    // 初始化倒计时的毫秒数
+    // 初始化倒计时的数
     initSecond() {
       const arr = this.time.split(':')
       this.seconds = (+arr[0]) * 60 * 60 + (+arr[1]) * 60 + (+arr[2])

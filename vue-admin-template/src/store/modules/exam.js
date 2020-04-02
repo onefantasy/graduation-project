@@ -2,7 +2,8 @@ import {
   startExam,
   endExam,
   getExamedPaper,
-  getExamRecordByAP
+  getExamRecordByAP,
+  getExamOverallByPid
 } from '@/api/exam'
 
 const actions = {
@@ -27,6 +28,12 @@ const actions = {
   // 获取用户某次考试的详情
   async getExamRecordByAP(ctx, data) {
     const res = await getExamRecordByAP(data)
+    return res
+  },
+
+  // 根据paperId获取某张试卷的考试整体情况（教师专用接口，用于统计考试情况）
+  async getExamOverallByPid(ctx, params) {
+    const res = await getExamOverallByPid(params)
     return res
   }
 }

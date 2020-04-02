@@ -4,6 +4,7 @@ const router = require('koa-router')()
 const exam = require('../model/examRecords')
 const papers = require('../model/papers')
 const users = require('../model/users')
+const answers = require('../model/answerRecords')
 const Op = require('sequelize').Op
 
 router.prefix('/exam')
@@ -11,6 +12,40 @@ router.prefix('/exam')
 // 开始考试接口，生成记录
 router.post('/startExam',async (ctx, next) => {
   const params = ctx.request.body
+
+  
+  const paper = await papers.findOne({ where: { paperId: params.paperId } })
+  if (!paper) {
+    ctx.body = {
+      code: 404,
+      message: '不存在此试卷'
+    }
+    return false
+  }
+  let startTime = params.startExam.replace(new RegExp("-", "gm"), "/")
+  startTime = (new Date(startTime)).getTime()
+  // 检查是否已经可以开始考试 开始
+  let pStartTime = paper.startTime.replace(new RegExp("-","gm"),"/")
+  pStartTime = (new Date(pStartTime)).getTime()
+  if (pStartTime > startTime) {
+    ctx.body = {
+      code: 103,
+      message: '该试卷尚未开始考试！'
+    }
+  }
+  // 检查是否已经可以开始考试 结束
+
+  // 查看是否已经超过了截止考试的时间 开始
+  let pEndTime = paper.endTime.replace(new RegExp("-","gm"),"/")
+  pEndTime = (new Date(pEndTime)).getTime()
+  if (startTime > pEndTime) {
+    ctx.body = {
+      code: 103,
+      message: '已经超过了该试卷的截止考试时间，无法进行考试！'
+    }
+    return false
+  }
+  // 查看是否已经超过了截止考试的时间 结束
 
   const where = { paperId: params.paperId, account: ctx.account }
 
@@ -67,7 +102,6 @@ router.post('/endExam', async (ctx, next) => {
 // 根据用户id获取其的考试记录(用于展示在表格中)
 router.get('/getExamedPaper', async (ctx, next) => {
   const params = ctx.query
-  console.log('接收的参数：', params)
   exam.belongsTo(papers, { foreignKey: 'paperId' })
   papers.belongsTo(users, { foreignKey: 'account' })
   const searchArr = ['paperId', 'paperTitle', 'subject']
@@ -137,6 +171,41 @@ router.post('/getExamRecordByAP', async (ctx, next) => {
       orderNumber,
       recordNumber
     }
+  }
+})
+
+// 根据paperId获取某张试卷的考试整体情况（教师专用接口，用于统计考试情况）
+router.get('/getExamOverallByPid', async (ctx, next) => {
+  const params = ctx.query
+  // exam.belongsTo(papers, { foreignKey: 'paperId' })
+  exam.belongsTo(users, { foreignKey: 'account' })
+  exam.hasMany(answers, { foreignKey: 'eid' })
+  const where = params
+  const { rows: data, count: total } = await exam.findAndCountAll({ 
+    where,
+    order: [
+      ['scoreExam', 'DESC']
+    ],
+    include: [
+      // {
+      //   model: papers
+      // },
+      {
+        model: users,
+        attributes: { exclude: ['password'] }
+      },
+      {
+        model: answers,
+        raw: true
+      }
+    ]
+  })
+
+  ctx.body = {
+    code: data ? 200 : 103,
+    message: data ? '查询成功' : '查询失败',
+    data,
+    total
   }
 })
 

@@ -86,7 +86,7 @@ export const constantRoutes = [
   {
     path: '/exam',
     component: Layout,
-    meta: { title: '考试', icon: 'example' },
+    meta: { title: '考试管理', icon: 'example' },
     children: [
       {
         path: 'searchPaper',
@@ -107,6 +107,12 @@ export const constantRoutes = [
         component: () => import('@/views/exam/examDetail'),
         meta: { title: '考试详情' },
         hidden: true
+      },
+      {
+        path: 'manage',
+        name: 'Manage',
+        component: () => import('@/views/exam/manage'),
+        meta: { title: '考试情况' }
       }
     ]
   },

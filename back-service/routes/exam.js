@@ -177,10 +177,23 @@ router.post('/getExamRecordByAP', async (ctx, next) => {
 // 根据paperId获取某张试卷的考试整体情况（教师专用接口，用于统计考试情况）
 router.get('/getExamOverallByPid', async (ctx, next) => {
   const params = ctx.query
+
+  let where = { paperId: params.paperId, account: ctx.account }
+
+  const res = await papers.findOne({ where })
+
+  if (!res) {
+    ctx.body = {
+      code: 404,
+      message: '不存在此试卷！'
+    }
+    return false
+  }
+
   // exam.belongsTo(papers, { foreignKey: 'paperId' })
   exam.belongsTo(users, { foreignKey: 'account' })
   exam.hasMany(answers, { foreignKey: 'eid' })
-  const where = params
+  where = { paperId: params.paperId }
   const { rows: data, count: total } = await exam.findAndCountAll({ 
     where,
     order: [

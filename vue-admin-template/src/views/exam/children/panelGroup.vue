@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             平均分
           </div>
-          <count-to :start-val="0" :end-val="showArr[2]" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="showArr[2]" :duration="3200" :decimals="2" class="card-panel-num" />
         </div>
       </div>
     </el-col>

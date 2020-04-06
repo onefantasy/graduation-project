@@ -3,7 +3,8 @@ import {
   endExam,
   getExamedPaper,
   getExamRecordByAP,
-  getExamOverallByPid
+  getExamOverallByPid,
+  changeScore
 } from '@/api/exam'
 
 const actions = {
@@ -34,6 +35,12 @@ const actions = {
   // 根据paperId获取某张试卷的考试整体情况（教师专用接口，用于统计考试情况）
   async getExamOverallByPid(ctx, params) {
     const res = await getExamOverallByPid(params)
+    return res
+  },
+
+  // 更改分数
+  async changeScore(ctx, data) {
+    const res = await changeScore(data)
     return res
   }
 }

@@ -124,7 +124,7 @@ export default {
       paper: {
         paperTitle: '试卷标题', // 试卷标题
         subject: '试卷科目', // 试卷科目
-        time: '02:03:00', // 考试时间
+        time: '02:30:00', // 考试时间
         startTime: '2020-03-25 09:05:05', // 考试开始时间
         endTime: '2020-03-28 09:05:05', // 考试结束时间
         totalScore: 0, // 总分

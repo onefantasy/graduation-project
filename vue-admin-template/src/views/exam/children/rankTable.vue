@@ -29,9 +29,9 @@
 
       <el-table-column prop="completionsExam" label="填空题" sortable align="center" show-overflow-tooltip />
 
-      <el-table-column prop="essayExam" label="问答题" sortable align="center" show-overflow-tooltip />
+      <el-table-column prop="essaysExam" label="问答题" sortable align="center" show-overflow-tooltip />
 
-      <el-table-column prop="timeExam" label="考试用时" align="center" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="timeExam" label="考试用时" align="center" show-overflow-tooltip />
     </el-table>
   </div>
 </template>

@@ -44,3 +44,12 @@ export function getExamOverallByPid(params) {
     params
   })
 }
+
+// 更改分数
+export function changeScore(data) {
+  return request({
+    url: '/exam/changeScore',
+    method: 'post',
+    data
+  })
+}

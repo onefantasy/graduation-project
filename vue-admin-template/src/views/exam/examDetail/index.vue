@@ -53,7 +53,9 @@
                 <!-- 选项 结束 -->
                 <p>分值：{{ unit.score }}</p>
                 <p>标准答案：{{ unit.rightKey }}</p>
-                <p>我的答案：<span :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }">{{ unit.mineAnswer }}</span>
+                <p>我的答案：
+                  <span v-if="item.type !== 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }">{{ unit.mineAnswer }}</span>
+                  <span v-if="item.type === 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }" v-html="unit.mineAnswer" />
                   <i v-if="!(unit.isTrue == null) && unit.isTrue" class="isTrue-tip green el-icon-check" />
                   <i v-if="!(unit.isTrue == null) && !unit.isTrue" class="isTrue-tip red el-icon-close" />
                 </p>

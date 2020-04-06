@@ -15,7 +15,7 @@
         <!-- 返回与改卷按钮 开始 -->
         <div>
           <el-button icon="el-icon-d-arrow-left" @click="reset">返回搜索</el-button>
-          <el-button style="float: right;" type="primary">批卷 <i class="el-icon-d-arrow-right" /></el-button>
+          <el-button style="float: right;" type="primary" @click="goMark">批卷 <i class="el-icon-d-arrow-right" /></el-button>
         </div>
         <!-- 返回与改卷按钮 结束 -->
 
@@ -182,7 +182,7 @@ export default {
       const step = this.config.totalScore / this.scoreLevelNumber
       // 初始化层级数组的数据
       for (let i = 0, len = this.scoreLevelNumber; i < len; i++) {
-        this.scoreLevel.push(`(${i * step}, ${(i + 1) * step}]`)
+        this.scoreLevel.push(`${i * step}~${(i + 1) * step}`)
         this.scoreLevelPeople.push(0)
       }
       // 初始化题型的数组
@@ -197,7 +197,8 @@ export default {
         totalScore += +this.overall[i].scoreExam
         totalTime += this.formatTimeToSecond(this.overall[i].timeExam)
         // 分数等级统计
-        const level = parseInt(+this.overall[i].scoreExam / step)
+        let level = parseInt(+this.overall[i].scoreExam / step)
+        level === this.scoreLevelNumber && level--
         this.scoreLevelPeople[level]++
         // 每种题型的分数统计
         for (let j = 0, len = this.types.length; j < len; j++) {
@@ -270,6 +271,10 @@ export default {
         completions: [], // 填空题得分
         essays: [] // 问答题得分
       }
+    },
+    // 跳转到批改试卷页面
+    goMark() {
+      this.$router.push('/exam/mark?p=' + this.paperId)
     }
   }
 }

@@ -113,6 +113,13 @@ export const constantRoutes = [
         name: 'Manage',
         component: () => import('@/views/exam/manage'),
         meta: { title: '考试情况' }
+      },
+      {
+        path: 'mark',
+        name: 'Mark',
+        component: () => import('@/views/exam/mark'),
+        meta: { title: '批改试卷' },
+        hidden: true
       }
     ]
   },

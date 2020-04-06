@@ -137,19 +137,21 @@ router.get('/getExamedPaper', async (ctx, next) => {
 // 获取某个用户在某张试卷上的考试记录(有统计排名，所以不用eid)
 router.post('/getExamRecordByAP', async (ctx, next) => {
   const params = ctx.request.body
-  console.log('接收到的参数：', params)
   const where = { paperId: params.paperId }
-  const data = await exam.findAll({ where }, {
+  const { rows: data, count: total } = await exam.findAndCountAll({
+    where,
     order: [
-      ['scoreExam', 'DESc']
+      ['scoreExam', 'DESC']
     ]
   })
   // 本张试卷记录条数
-  const recordNumber = data.length
+  const recordNumber = total
   // 排名
   let orderNumber = 0
   // 需要取出的数据
   let target = ''
+
+  console.log('考试情况：', data)
 
   // 便利所有记录找出自己需要的记录
   for (let i = 0; i < recordNumber; i++) {
@@ -219,6 +221,37 @@ router.get('/getExamOverallByPid', async (ctx, next) => {
     message: data ? '查询成功' : '查询失败',
     data,
     total
+  }
+})
+
+// 批卷，更改分数
+router.post('/changeScore', async (ctx, next) => {
+  const params = ctx.request.body
+  console.log('接收到的参数：', params)
+  // 找出该考试记录
+  const data = await exam.findOne({ where: { eid: params.eid } })
+  if (!data) {
+    ctx.body = {
+      code: 404,
+      message: '不存在此考试记录！'
+    }
+    return false
+  }
+  // 更新考试记录的总分数
+  const typeName = params.type + 'Exam'
+  const res = await data.update({ scoreExam: params.totalScore, [typeName]: +data[typeName] + +params.gap })
+  if (!res) {
+    ctx.body = {
+      code: 103,
+      message: '试卷分数更新失败！'
+    }
+    return false
+  }
+  // 更新某道试题的得分情况
+  const res_1 = await answers.update({ score: params.newScore, isTrue: +params.newScore !== 0 }, { where: { eid: params.eid, qid: params.qid } })
+  ctx.body = {
+    code: res_1 ? 200 : 103,
+    message: res_1 ? '更新试题分数成功' : '更新试题分数失败'
   }
 })
 

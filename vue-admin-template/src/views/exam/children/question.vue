@@ -45,7 +45,7 @@
         <!-- 填空题 结束 -->
         <!-- 问答题 开始 -->
         <div v-else style="flex: 1">
-          <el-input v-model="textarea" type="textarea" @input="changeTextarea" />
+          <el-input v-model="textarea" type="textarea" autosize @input="changeTextarea" />
         </div>
         <!-- 问答题 结束 -->
       </div>
@@ -167,7 +167,7 @@ export default {
     },
     // 问答题答案
     changeTextarea(e) {
-      this.answers[this.type][this.index].mineAnswer = e
+      this.answers[this.type][this.index].mineAnswer = e.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
     }
   }
 }

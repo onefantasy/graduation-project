@@ -30,6 +30,134 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+// export const constantRoutes = [
+//   {
+//     path: '/login',
+//     component: () => import('@/views/login/index'),
+//     hidden: true
+//   },
+
+//   {
+//     path: '/404',
+//     component: () => import('@/views/404'),
+//     hidden: true
+//   },
+
+//   {
+//     path: '/',
+//     component: Layout,
+//     redirect: '/dashboard',
+//     children: [{
+//       path: 'dashboard',
+//       name: 'Dashboard',
+//       component: () => import('@/views/dashboard/index'),
+//       meta: { title: '首页', icon: 'dashboard', affix: true }
+//     }]
+//   },
+
+//   {
+//     path: '/paper',
+//     component: Layout,
+//     redirect: '/paper/mine',
+//     meta: { title: '试卷管理', icon: 'form' },
+//     children: [
+//       {
+//         path: 'create',
+//         name: 'Create',
+//         component: () => import('@/views/paper/create/index'),
+//         meta: { title: '创建试卷' }
+//       },
+//       {
+//         path: 'mine',
+//         name: 'Mine',
+//         component: () => import('@/views/paper/mine/index'),
+//         meta: { title: '我的试卷' }
+//       },
+//       {
+//         path: 'edit/:id',
+//         name: 'EditPaper',
+//         component: () => import('@/views/paper/edit/index'),
+//         meta: { title: '编辑试卷' },
+//         hidden: true
+//       }
+//     ]
+//   },
+
+//   {
+//     path: '/exam',
+//     component: Layout,
+//     meta: { title: '考试管理', icon: 'example' },
+//     children: [
+//       {
+//         path: 'searchPaper',
+//         name: 'SearchPaper',
+//         component: () => import('@/views/exam/searchPaper'),
+//         meta: { title: '查找试卷' }
+//       },
+//       {
+//         path: 'examination',
+//         name: 'Examination',
+//         component: () => import('@/views/exam/examination'),
+//         meta: { title: '考试' },
+//         hidden: true
+//       },
+//       {
+//         path: 'examDetail',
+//         name: 'ExamDetail',
+//         component: () => import('@/views/exam/examDetail'),
+//         meta: { title: '考试详情' },
+//         hidden: true
+//       },
+//       {
+//         path: 'manage',
+//         name: 'Manage',
+//         component: () => import('@/views/exam/manage'),
+//         meta: { title: '考试情况' }
+//       },
+//       {
+//         path: 'mark',
+//         name: 'Mark',
+//         component: () => import('@/views/exam/mark'),
+//         meta: { title: '批改试卷' },
+//         hidden: true
+//       }
+//     ]
+//   },
+
+//   {
+//     path: '/question',
+//     component: Layout,
+//     meta: { title: '我的试题', icon: 'nested' },
+//     children: [
+//       {
+//         path: 'addQuestion',
+//         name: 'AddQuestion',
+//         component: () => import('@/views/question/addQuestion/index'),
+//         meta: { title: '添加试题' }
+//       },
+//       {
+//         path: 'wrongQuestion',
+//         name: 'WrongQuestion',
+//         component: () => import('@/views/question/wrongQuestion/index'),
+//         meta: { title: '错题集' }
+//       }
+//     ]
+//   },
+
+//   {
+//     path: '/userInfo',
+//     component: Layout,
+//     children: [{
+//       path: 'index',
+//       name: 'UserInfo',
+//       component: () => import('@/views/userInfo/index'),
+//       meta: { title: '个人中心', icon: 'user' }
+//     }]
+//   },
+//   // 404 page must be placed at the end !!!
+//   { path: '*', redirect: '/404', hidden: true }
+// ]
+
 export const constantRoutes = [
   {
     path: '/login',
@@ -53,31 +181,33 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard', affix: true }
     }]
-  },
+  }
+]
 
+export const asyncRoutes = [
   {
     path: '/paper',
     component: Layout,
     redirect: '/paper/mine',
-    meta: { title: '试卷管理', icon: 'form' },
+    meta: { title: '试卷管理', icon: 'form', roles: ['T', 'S'] },
     children: [
       {
         path: 'create',
         name: 'Create',
         component: () => import('@/views/paper/create/index'),
-        meta: { title: '创建试卷' }
+        meta: { title: '创建试卷', roles: ['T'] }
       },
       {
         path: 'mine',
         name: 'Mine',
         component: () => import('@/views/paper/mine/index'),
-        meta: { title: '我的试卷' }
+        meta: { title: '我的试卷', roles: ['T', 'S'] }
       },
       {
         path: 'edit/:id',
         name: 'EditPaper',
         component: () => import('@/views/paper/edit/index'),
-        meta: { title: '编辑试卷' },
+        meta: { title: '编辑试卷', roles: ['T'] },
         hidden: true
       }
     ]
@@ -86,39 +216,40 @@ export const constantRoutes = [
   {
     path: '/exam',
     component: Layout,
+    redirect: '/exam/searchPaper',
     meta: { title: '考试管理', icon: 'example' },
     children: [
       {
         path: 'searchPaper',
         name: 'SearchPaper',
         component: () => import('@/views/exam/searchPaper'),
-        meta: { title: '查找试卷' }
+        meta: { title: '查找试卷', roles: ['T', 'S'] }
       },
       {
         path: 'examination',
         name: 'Examination',
         component: () => import('@/views/exam/examination'),
-        meta: { title: '考试' },
+        meta: { title: '考试', roles: ['T', 'S'] },
         hidden: true
       },
       {
         path: 'examDetail',
         name: 'ExamDetail',
         component: () => import('@/views/exam/examDetail'),
-        meta: { title: '考试详情' },
+        meta: { title: '考试详情', roles: ['T', 'S'] },
         hidden: true
       },
       {
         path: 'manage',
         name: 'Manage',
         component: () => import('@/views/exam/manage'),
-        meta: { title: '考试情况' }
+        meta: { title: '考试情况', roles: ['T'] }
       },
       {
         path: 'mark',
         name: 'Mark',
         component: () => import('@/views/exam/mark'),
-        meta: { title: '批改试卷' },
+        meta: { title: '批改试卷', roles: ['T'] },
         hidden: true
       }
     ]
@@ -144,6 +275,9 @@ export const constantRoutes = [
     ]
   },
 
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true },
+
   {
     path: '/userInfo',
     component: Layout,
@@ -153,12 +287,8 @@ export const constantRoutes = [
       component: () => import('@/views/userInfo/index'),
       meta: { title: '个人中心', icon: 'user' }
     }]
-  },
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  }
 ]
-
-export const asyncRoutes = []
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

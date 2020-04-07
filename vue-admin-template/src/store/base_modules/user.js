@@ -1,4 +1,4 @@
-import { login, logout, getInfo, register, setInfo } from '@/api/user'
+import { login, logout, getInfo, register, setInfo, changePassword } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -16,6 +16,7 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
+    setToken(token)
     state.token = token
   },
   SET_INFO: (state, info) => {
@@ -31,7 +32,7 @@ const actions = {
       login({ account: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        // setToken(data.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -104,6 +105,12 @@ const actions = {
         reject(err)
       })
     })
+  },
+
+  // 更新密码
+  async changePassword({ commit }, data) {
+    const res = await changePassword(data)
+    return res
   }
 }
 

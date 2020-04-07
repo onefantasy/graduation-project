@@ -13,6 +13,9 @@
             <el-tab-pane label="更改头像" name="headIcon">
               <changeHeadIcon />
             </el-tab-pane>
+            <el-tab-pane label="更改密码" name="password">
+              <changePassword />
+            </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-col>
@@ -24,13 +27,15 @@
 import userCard from './children/userCard'
 import changeInfo from './children/changeInfo'
 import changeHeadIcon from './children/changeHeadIcon'
+import changePassword from './children/changePassword'
 
 export default {
   name: 'UserInfo',
   components: {
     userCard,
     changeInfo,
-    changeHeadIcon
+    changeHeadIcon,
+    changePassword
   },
   data() {
     return {

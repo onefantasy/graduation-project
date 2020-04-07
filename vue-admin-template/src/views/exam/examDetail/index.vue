@@ -168,7 +168,7 @@ export default {
       const params = { eid: this.$route.query.e }
       // 发起请求
       this.$store.dispatch('answer/getAnswersByEid', params).then(res => {
-        console.log('根据eid获取到的记录:', res)
+        // console.log('根据eid获取到的记录:', res)
         this.answersRecords = res.data
         // 获取该试卷的试卷试题
         this.getPaperQuestions()
@@ -189,7 +189,7 @@ export default {
         index++
         return obj
       })
-      console.log('需要渲染的试卷：', this.paper)
+      // console.log('需要渲染的试卷：', this.paper)
     },
     // 获取本次考试的记录
     getExamRecord() {

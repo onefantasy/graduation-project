@@ -31,8 +31,13 @@ export default {
     //   }
       screenfull.toggle()
     },
+    // 全屏状态发生变化
     change() {
       this.isFullscreen = screenfull.isFullscreen
+      if (!this.isFullscreen) {
+        // 通知父组件，关闭了全屏
+        this.$emit('closeFull')
+      }
     },
     init() {
       if (!screenfull.enabled) {

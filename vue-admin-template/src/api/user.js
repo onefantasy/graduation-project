@@ -40,3 +40,12 @@ export function setInfo(data) {
     data
   })
 }
+
+// 更改密码
+export function changePassword(data) {
+  return request({
+    url: '/users/changePassword',
+    method: 'post',
+    data
+  })
+}

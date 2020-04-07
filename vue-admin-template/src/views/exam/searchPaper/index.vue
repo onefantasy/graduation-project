@@ -139,9 +139,11 @@ export default {
         }
         return this.$store.dispatch('exam/startExam', data)
       }).then(res => {
+        console.log('token：', res.token)
+        this.$store.commit('user/SET_TOKEN', res.token)
         this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
         // 测试用的eid e1585548598871
-        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1585642698213`)
+        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1586180781209`)
       }).catch(() => {})
     }
   }

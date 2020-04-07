@@ -1,5 +1,5 @@
 <template>
-  <div class="mark-box backgroundGray">
+  <div ref="markBox" class="mark-box backgroundGray">
     <el-row :gutter="32">
       <el-col :span="16" class="paper">
         <el-scrollbar class="scrollbar-box">
@@ -36,7 +36,10 @@
                 <div class="flex-box">
                   <div style="width: 60px;line-height: 40px;">得分: </div>
                   <el-input v-model="unit.newScore" type="number" style="width: 200px;" :min="0" :max="unit.score" />
-                  <el-button type="primary" style="margin-left: 20px;" @click="changeScore(unit.oldScore, unit.newScore, unit, item.type, unit.score)">保存</el-button>
+                  <el-button type="primary" style="margin-left: 20px;" @click="changeScore(unit.oldScore, unit.newScore, unit, item.type, unit.score)">
+                    <svg-icon icon-class="save" />
+                    保存
+                  </el-button>
                 </div>
               </div>
             </div>
@@ -67,7 +70,9 @@
 </template>
 
 <script>
+import fun from '@/mixin/fun'
 export default {
+  mixins: [fun],
   data() {
     return {
       // 试卷配置
@@ -115,6 +120,8 @@ export default {
       const params = {
         paperId: this.$route.query.p
       }
+      // 开启遮罩
+      this.openLoad()
       // 发起请求
       this.$store.dispatch('paper/getPaperDetail', params).then(res => {
         this.config = res.data.config
@@ -123,6 +130,8 @@ export default {
       }).catch(() => {
         this.$message.error('试卷信息获取失败，请稍后重试')
         this.$router.go(-1)
+        // 出错关闭遮罩
+        this.closeLoad()
       })
     },
     // 获取试卷题目
@@ -140,6 +149,9 @@ export default {
         }
         this.initPaper()
         this.getExamineeList()
+      }).catch(() => {
+        // 出错, 关闭遮罩
+        this.closeLoad()
       })
     },
     // 初始化试卷
@@ -173,6 +185,9 @@ export default {
           this.currentRecord = this.overall[0].eid
           this.setAnswer(this.overall[0].eid, this.overall[0])
         }
+      }).finally(() => {
+        // 所有请求和操作执行完毕，关闭遮罩
+        this.closeLoad()
       })
     },
     // 渲染考生答案到试卷上

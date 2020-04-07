@@ -50,7 +50,7 @@ export default {
   },
   watch: {
     'defalutContent'() {
-      console.log(this.keyWord, this.defalutContent)
+      // console.log(this.keyWord, this.defalutContent)
       // 监听传入默认值的变化，更改当前编辑器的内容
       this.content = this.defalutContent
     }

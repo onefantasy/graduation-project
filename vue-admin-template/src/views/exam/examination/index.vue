@@ -2,7 +2,7 @@
   <div ref="examination" class="examination-box">
     <!-- 全屏组件，用于开启全屏和关闭全屏功能 开始 -->
     <div v-show="false">
-      <screenfull id="screenfull" ref="screenfull" class="right-menu-item hover-effect" />
+      <screenfull id="screenfull" ref="screenfull" class="right-menu-item hover-effect" @closeFull="closeFull" />
     </div>
     <!-- 全屏组件，用于开启全屏和关闭全屏功能 结束 -->
 
@@ -103,10 +103,17 @@ export default {
       account: '',
 
       // 加载遮罩
-      load: null
+      load: null,
+
+      // 当前考试的paperId
+      paperId: '',
+
+      // 是否已经交卷的标志
+      isSubmitted: false
     }
   },
   created() {
+    this.paperId = this.$route.query.paperId
     // 获取中文序号
     this.chineseOrderNumber = this.$store.getters.constant.chineseOrderNumber
     // 获取题型与其对应标志
@@ -123,10 +130,22 @@ export default {
     this.getPaperDetail()
   },
   mounted() {
-    // if (!this.$refs['screenfull'].isFullscreen) {
-    //   // 如果不是全屏，则开启全屏模式
-    //   this.$refs['screenfull'].click()
-    // }
+    if (!this.$refs['screenfull'].isFullscreen) {
+      // 如果不是全屏，则开启全屏模式
+      this.$refs['screenfull'].click()
+    }
+  },
+  // 路由跳转控制
+  async beforeRouteLeave(to, from, next) {
+    if (this.isSubmitted) {
+      // 已经交卷完成，直接进行跳转
+      next()
+    } else {
+      this.openLoad()
+      // 尚未交卷，进行交卷操作
+      await this.submitPaper()
+      this.closeLoad()
+    }
   },
   methods: {
     // 开启遮罩
@@ -240,7 +259,7 @@ export default {
       // 题目跳转
       this.selectMenuItem(this.questionsIndex[index])
     },
-    // 交卷
+    // 交卷, 接收一个布尔值作为参数，参数为true,为强行交卷
     async submitPaper(bool) {
       let flag = false
       if (!bool) {
@@ -260,8 +279,10 @@ export default {
       // 记录评分结果
       let data = null
 
+      this.openLoad()
+
       // 获取这张试卷的所有正确答案
-      this.$store.dispatch('question/getPaperQuestions', { paperId: this.$route.query.paperId }).then(res => {
+      await this.$store.dispatch('question/getPaperQuestions', { paperId: this.paperId }).then(res => {
         // 调用评分函数
         data = grading(res.data, this.answers)
         data.score.eid = this.$route.query.e
@@ -269,14 +290,46 @@ export default {
         data.score.timeExam = this.$refs['timer'].getUsedTime()
         return this.$store.dispatch('exam/endExam', data.score)
       }).then(res => {
+        // 处理问答题答案
+        for (let i = 0, l = data.answerArr.length; i < l; i++) {
+          if (data.answerArr[i].questionType === 'essays') {
+            data.answerArr[i].mineAnswer = data.answerArr[i].mineAnswer.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
+          }
+        }
         return this.$store.dispatch('answer/saveAnswerRecords', { records: data.answerArr })
       }).then(res => {
         // 删除当前页面的affix
         this.$store.commit('tagsView/DEL_VISITED_VIEW', this.$route)
         this.$message.success('交卷成功！')
+        // 将交卷标志置为true
+        this.isSubmitted = true
         // 进行路由跳转
         this.$router.push('/paper/mine')
-      }).catch(() => {})
+      }).catch(() => {}).finally(() => {
+        this.closeLoad()
+      })
+    },
+    // 关闭全屏的处理
+    async closeFull() {
+      // 再次开启全屏
+      this.$refs['screenfull'].click()
+      let flag = false
+      await this.$confirm('退出全屏视为结束考试，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        flag = false
+      }).catch(() => {
+        flag = true
+      })
+      this.closeLoad()
+      // 不交卷
+      if (flag) {
+        return false
+      }
+      // 交卷
+      await this.submitPaper(true)
     }
   }
 }

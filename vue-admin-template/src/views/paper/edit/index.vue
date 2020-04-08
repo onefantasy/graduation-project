@@ -33,15 +33,21 @@
       </el-container>
       <!-- 编辑试卷题目 结束 -->
     </el-container>
+
+    <!-- 返回顶部组件 开始 -->
+    <back-to-top ref="backToTop" />
+    <!-- 返回顶部组件 结束 -->
   </div>
 </template>
 
 <script>
 import questionEditor from '@/components/questionEditor'
+import BackToTop from '@/components/BackToTop'
 export default {
   name: 'EditPaper',
   components: {
-    questionEditor
+    questionEditor,
+    BackToTop
   },
   data() {
     return {
@@ -204,6 +210,8 @@ export default {
       }
       // 题目跳转
       this.selectMenuItem(this.questionsIndex[index])
+      // 回到顶部
+      // this.$refs['backToTop'].backToTop()
     },
     // 下一题
     nextQuestion() {
@@ -215,6 +223,8 @@ export default {
       }
       // 题目跳转
       this.selectMenuItem(this.questionsIndex[index])
+      // 回到顶部
+      // this.$refs['backToTop'].backToTop()
     },
     // 保存当前编辑题目
     saveQuestion() {

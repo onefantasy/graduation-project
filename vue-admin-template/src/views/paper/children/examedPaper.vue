@@ -131,8 +131,8 @@ export default {
     // 请求考试记录
     getExamedPaper() {
       const params = {
-        page: 1,
-        pageSize: 10,
+        page: this.page,
+        pageSize: this.pageSize,
         ...this.searchKeys
       }
       // 发起请求

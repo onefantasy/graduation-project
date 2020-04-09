@@ -24,7 +24,13 @@ const multiples = sequelize.define('multiples', {
   F: Sequelize.TEXT('long'),
   rightKey: Sequelize.STRING,
   // 试题在试卷中的序号
-  orderNumber: Sequelize.INTEGER
+  orderNumber: Sequelize.INTEGER,
+  // 标题，用于收藏显示
+  title: Sequelize.STRING,
+  // 来源
+  from: Sequelize.STRING,
+  // 作者
+  auth: Sequelize.STRING
 }, { freezeTableName: true })
 
 module.exports = multiples

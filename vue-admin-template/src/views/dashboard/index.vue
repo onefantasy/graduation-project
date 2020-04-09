@@ -39,7 +39,7 @@
           <div v-else>
             <el-row v-for="(item, index) in records" :key="index" class="record-item">
               <el-col class="paper-title" :span="16">◉ {{ item.paperTitle }}</el-col>
-              <el-col class="score" :span="8">{{ item.publish ? item.examRecords.length + '人' : '未发布'}}</el-col>
+              <el-col class="score" :span="8">{{ item.publish ? item.examRecords.length + '人' : '未发布' }}</el-col>
             </el-row>
           </div>
         </div>

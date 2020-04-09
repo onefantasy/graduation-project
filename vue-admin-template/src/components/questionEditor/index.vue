@@ -15,6 +15,14 @@
       </el-form-item>
       <!-- 选择提醒 结束 -->
 
+      <!-- 题目标题（用于收藏） 开始 -->
+      <div v-if="!questionInfo.type">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="question.title" placeholder="请求输入此题目的标题，用于在收藏列表中展示" />
+        </el-form-item>
+      </div>
+      <!-- 题目标题（用于收藏） 结束-->
+
       <!-- 主要输入内容区域 开始 -->
       <div v-if="question.content">
         <el-form-item v-for="(item, index) of question.content" :key="index" :label="fieldTip[index]" :prop="'content.' + index">
@@ -26,6 +34,7 @@
             <el-radio-button v-for="unit of judgeOptions" :key="unit" :label="unit" />
           </el-radio-group>
           <el-input v-else-if="numberField.indexOf(index) !== -1" v-model.number="question.content[index]" type="number" />
+          <el-input v-else-if="question.type === 'essays' && index === 'rightKey'" v-model="question.content[index]" type="textarea" autosize />
           <el-input v-else v-model="question.content[index]" />
         </el-form-item>
       </div>
@@ -33,7 +42,7 @@
 
       <!-- 正确答案的填写格式 开始 -->
       <el-form-item>
-        正确答案格式：<br>
+        参考答案格式：<br>
         1. 答案的前后注意不要有空格<br>
         2. 单选题请在输入框中输入唯一到正确答案，如：A<br>
         3. 多选题请将答案依次写在输入框中，每个答案之间不要有空格或者他符号，如：ABCD<br>
@@ -70,6 +79,7 @@ export default {
       // 题目的存储内容格式
       question: {
         type: '', // 试题类型
+        title: '', // 试题标题
         content: {} // 试题内容
       },
 
@@ -88,6 +98,7 @@ export default {
       // 表单验证规则
       rules: {
         type: [{ required: true, message: '请选择题目类型', tigger: 'blur' }],
+        title: [{ required: true, message: '请填写题目的标题，便于展示', tigger: 'blur' }],
         'content.content': [{ required: true, message: '请填写题目内容', tigger: 'blur' }],
         'content.score': [{ required: true, type: 'number', message: '请填写该题分数', tigger: 'blur' }],
         'content.A': [{ required: true, message: '请填写该选项的内容', tigger: 'blur' }],
@@ -115,7 +126,10 @@ export default {
       questionInfo: {
         type: '',
         content: {}
-      }
+      },
+
+      // 编辑的试题来源
+      from: '本人编辑'
     }
   },
   created() {
@@ -148,6 +162,13 @@ export default {
         return false
       }
       this.question.content.state = this.$store.getters.constant.question.state.collection
+      this.question.content.from = this.from
+      this.question.content.auth = this.$store.getters.userInfo.name
+      this.question.title && (this.question.content.title = this.question.title)
+      if (this.question.type === 'essays') {
+        this.question.content.rightKey = this.question.content.rightKey.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
+      }
+      console.log('参数：', this.question)
       this.$store.dispatch('question/saveQuestion', this.question).then(res => {
         this.$message.success(res.message)
         delete this.question.content.state
@@ -160,6 +181,9 @@ export default {
     getQuestionInfo() {
       // 调用该函数时，表示试题信息已经保存
       this.isSaved = true
+      if (this.question.type === 'essays') {
+        this.question.content.rightKey = this.question.content.rightKey.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
+      }
       return this.question.content
     },
     // 判断当前编辑的内容是否需要保存或者是否一境保存（主要给父组件使用）

@@ -1,5 +1,8 @@
 const router = require('koa-router')()
 
+// token
+const token = require ('../common/jwt.js')
+
 // 数据库操作
 const exam = require('../model/examRecords')
 const papers = require('../model/papers')
@@ -9,11 +12,10 @@ const Op = require('sequelize').Op
 
 router.prefix('/exam')
 
-// 开始考试接口，生成记录
+// 开始考试接口，生成记录，刷新token
 router.post('/startExam',async (ctx, next) => {
   const params = ctx.request.body
 
-  
   const paper = await papers.findOne({ where: { paperId: params.paperId } })
   if (!paper) {
     ctx.body = {
@@ -63,11 +65,14 @@ router.post('/startExam',async (ctx, next) => {
     flag = await exam.findOne({ where: { eid: params.eid } })
   }
   try {
+    // 刷新token
+    const tag = token.create({account: ctx.account})
     const data = await exam.create(params)
     ctx.body = {
       code: data ? 200 : 104,
       data,
-      message: data ? '开始考试' : '开始考试是失败'
+      message: data ? '开始考试' : '开始考试是失败',
+      token: data ? tag : false
     }
   } catch(err) {
     ctx.body = {

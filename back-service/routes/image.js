@@ -22,18 +22,6 @@ router.post('/saveHeadIcon', async (ctx,next) => {
     fs.renameSync(path, newPath)
     // 网络请求该图片的路径
     const imgUrl = `http://${config.server_baseUrl}:${config.server_port}/images${newPath.split('images')[1].replace(/\\/g,'/')}`
-    // // 存入数据库(目前仅有存入用户头像的数据库的操作)
-    // await db.query(`
-    //   update user set 
-    //     headIcon="${imgUrl}"
-    //   where account="${ctx.account}"
-    // `)
-    // // 返回前段的文件的路径
-    // ctx.body = {
-    //   code: 20000,
-    //   message: '更改头像成功',
-    //   imgUrl
-    // }
     const res = await users.update({
       headIcon: imgUrl
     },{

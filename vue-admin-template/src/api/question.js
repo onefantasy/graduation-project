@@ -17,3 +17,12 @@ export function getPaperQuestions(params) {
     params
   })
 }
+
+// 根据账号获取相应收藏题目的列表
+export function getCollecQuestions(params) {
+  return request({
+    url: '/question/getCollecQuestions',
+    method: 'get',
+    params
+  })
+}

@@ -84,7 +84,8 @@ router.get('/info', async (ctx, next) => {
       account: {
         [Op.eq]: `${params}`
       }
-    }
+    },
+    attributes: { exclude: ['password'] }
   })
   ctx.body = {
     code: user ? 200 : 404,
@@ -126,10 +127,40 @@ router.post('/setInfo', async (ctx, next) => {
 })
 
 // 退出登陆
-router.post('/logout', async (ctx,next) => {
+router.post('/logout', async (ctx, next) => {
   ctx.body = {
   	code: 200,
   	message: '成功退出'
+  }
+})
+
+// 更改密码
+router.post('/changePassword', async (ctx, next) => {
+  const params = ctx.request.body
+  const user = await users.findOne({ where: { account: ctx.account } })
+  if (!user) {
+    ctx.body = {
+      code: 404,
+      message: '不存在此账号'
+    }
+    return false
+  }
+  if (!bcrypt.compareSync(params.old, user.password)) {
+    ctx.body = {
+      code: 103,
+      message: '旧密码不正确！'
+    }
+    return false
+  } else {
+    // 加密用的盐
+    const slat = bcrypt.genSaltSync(10)
+    // 插入数据库时，对密码进行加密
+    params.newOne = bcrypt.hashSync(params.newOne, slat)
+    const res = await user.update({ password: params.newOne })
+    ctx.body = {
+      code: res ? 200 : 103,
+      message: res ? '更新成功' : '更新失败'
+    }
   }
 })
 

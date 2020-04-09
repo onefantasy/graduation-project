@@ -1,6 +1,7 @@
 import {
   saveQuestion,
-  getPaperQuestions
+  getPaperQuestions,
+  getCollecQuestions
 } from '@/api/question'
 
 const actions = {
@@ -13,6 +14,12 @@ const actions = {
   // 根据试卷id获取该试卷的所有试题
   async getPaperQuestions(ctx, params) {
     const res = await getPaperQuestions(params)
+    return res
+  },
+
+  // 根据账号获取相应的题目
+  async getCollecQuestions(ctx, params) {
+    const res = await getCollecQuestions(params)
     return res
   }
 }

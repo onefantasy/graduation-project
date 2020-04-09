@@ -1,9 +1,12 @@
 <template>
   <div class="login-container">
+
+    <img :src="bg" class="bg">
+
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">在线考试系统</h3>
       </div>
 
       <el-form-item prop="username">
@@ -13,7 +16,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="账号"
           name="username"
           type="text"
           tabindex="1"
@@ -30,7 +33,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -41,7 +44,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div class="tips">
         <span> 没有账号? <span class="link" @click="goRegister">快去注册</span></span>
@@ -72,14 +75,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入账号'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (!value) {
+        callback(new Error('请输入密码'))
       } else {
         callback()
       }
@@ -97,7 +100,10 @@ export default {
       passwordType: 'password',
       redirect: undefined,
       // 是否显示注册页面
-      drawer: false
+      drawer: false,
+
+      // 背景图片
+      bg: ''
     }
   },
   watch: {
@@ -107,6 +113,9 @@ export default {
       },
       immediate: true
     }
+  },
+  created() {
+    this.bg = require('@/assets/image/bg.jpg')
   },
   methods: {
     showPwd() {
@@ -202,7 +211,8 @@ $cursor: #fff;
 
 <style lang="scss" scoped>
 $bg:#2d3a4b;
-$dark_gray:#889aa4;
+// $dark_gray:#889aa4;
+$dark_gray:#ccc;
 $light_gray:#eee;
 
 .login-container {
@@ -210,14 +220,49 @@ $light_gray:#eee;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 9;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    border-top: 100px solid #283443;
+    border-bottom: 100px solid #283443;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .5);
+    transform: translate(-50%, 20%) rotate(60deg);
+  }
+
+  // 背景 开始
+  .bg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  // 背景 结束
 
   .login-form {
-    position: relative;
+    position: absolute;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
+    padding: 35px;
     overflow: hidden;
+    background: rgba(255, 255, 255, .3);
+    border: 10px solid rgba(255, 255, 255, .5);
+    top: 50%;
+    right: 10%;
+    transform: translateY(-50%);
+    z-index: 10;
   }
 
   .tips {

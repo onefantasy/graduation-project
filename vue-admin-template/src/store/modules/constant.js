@@ -61,7 +61,7 @@ const state = {
       'E': 'E',
       'F': 'F',
       'spaceNumber': '空格数',
-      'rightKey': '正确答案'
+      'rightKey': '参考答案'
     },
     // 题目所属状态（类型：题库，错题）
     state: {

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const secret = 'Examination-Online'
 
 // token 存在时间 单位秒
-const expiresIn = 7200
+const expiresIn = 14400
 
 
 // 生成token 

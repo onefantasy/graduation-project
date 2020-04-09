@@ -6,6 +6,7 @@ const moment = require('moment')
 // 数据库操作
 const papers = require('../model/papers')
 const users = require('../model/users')
+const exams = require('../model/examRecords')
 const Op = require('sequelize').Op
 
 router.prefix('/paper')
@@ -117,6 +118,28 @@ router.post('/changePublish', async (ctx, next) => {
   ctx.body = {
     code: res ? 200 : 103,
     message: res ? '更改成功' : '更改失败'
+  }
+})
+
+// 教师专用接口（首页，根据账号，用于统计每张试卷的考试人数）
+router.get('/getPapersAllCount', async (ctx, next) => {
+  const account = ctx.account
+  papers.hasMany(exams, { foreignKey: 'paperId' })
+  const where = { account }
+  const { rows: data, count: total } = await papers.findAndCountAll({
+    where,
+    attributes: ['paperTitle', 'publish'],
+    offset: 0,
+    limit: 10,
+    include: {
+      model: exams,
+      attributes: ['eid']
+    }
+  })
+  ctx.body = {
+    code: data ? 200 : 103,
+    message: data ? '查询成功' : '查询失败',
+    data
   }
 })
 

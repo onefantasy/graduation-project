@@ -17,11 +17,11 @@
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              首页
+              <i class="el-icon-house" /> 首页
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">退出</span>
+            <span style="display:block;" @click="logout"><i class="el-icon-switch-button" /> 退出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

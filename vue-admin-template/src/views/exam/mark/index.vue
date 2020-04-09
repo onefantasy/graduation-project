@@ -25,7 +25,7 @@
                   </div>
                 </div>
                 <!-- 选项 结束 -->
-                <p>标准答案：{{ unit.rightKey }}</p>
+                <p>参考答案：{{ unit.rightKey }}</p>
                 <p>考生答案：
                   <span v-if="item.type !== 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }">{{ unit.mineAnswer }}</span>
                   <span v-if="item.type === 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }" v-html="unit.mineAnswer" />

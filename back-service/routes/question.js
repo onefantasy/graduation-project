@@ -79,4 +79,23 @@ router.get('/getPaperQuestions', async (ctx, next) => {
   }
 })
 
+// 根据账号获取去收藏的题目
+router.get('/getCollecQuestions', async (ctx, next) => {
+  const params = ctx.query
+  const account = ctx.account
+  const where = { account, state: params.state }
+  const { rows: data, count: total } = await questions[params.type].findAndCountAll({
+    where,
+    order: [
+      ['createdAt', 'DESC']
+    ]
+  })
+  ctx.body = {
+    code: data ? 200 : 103,
+    message: data ? '查询成功' : '查询失败',
+    data,
+    total
+  }
+})
+
 module.exports = router

@@ -267,10 +267,10 @@ export const asyncRoutes = [
         meta: { title: '添加试题' }
       },
       {
-        path: 'wrongQuestion',
-        name: 'WrongQuestion',
-        component: () => import('@/views/question/wrongQuestion/index'),
-        meta: { title: '错题集' }
+        path: 'collection',
+        name: 'Collection',
+        component: () => import('@/views/question/collection/index'),
+        meta: { title: '收藏题集' }
       }
     ]
   },

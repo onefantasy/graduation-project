@@ -44,3 +44,11 @@ export function changePublish(data) {
     data
   })
 }
+
+// 获取教师首页试卷信息
+export function getPapersAllCount() {
+  return request({
+    url: '/paper/getPapersAllCount',
+    method: 'get'
+  })
+}

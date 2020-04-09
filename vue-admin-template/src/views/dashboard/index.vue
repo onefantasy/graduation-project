@@ -37,9 +37,9 @@
             </el-row>
           </div>
           <div v-else>
-            <el-row v-for="item in records" :key="item.eid" class="record-item">
+            <el-row v-for="(item, index) in records" :key="index" class="record-item">
               <el-col class="paper-title" :span="16">◉ {{ item.paperTitle }}</el-col>
-              <el-col class="score" :span="8">{{ item.scoreExam }}</el-col>
+              <el-col class="score" :span="8">{{ item.publish ? item.examRecords.length + '人' : '未发布'}}</el-col>
             </el-row>
           </div>
         </div>
@@ -71,8 +71,13 @@ export default {
   created() {
     // 获取默认头像
     this.defaluteHeadIcon = this.$store.getters.constant.defaluteHeadIcon
-    // 请求考试记录
-    this.getExamedPaper()
+    if (this.userInfo.role === 'T') {
+      // 请求教师试卷考试信息
+      this.getPapersAllCount()
+    } else {
+      // 请求学生考试记录
+      this.getExamedPaper()
+    }
   },
   methods: {
     // 跳转到其他页面
@@ -80,7 +85,7 @@ export default {
       if (!path) return false
       this.$router.push(path)
     },
-    // 请求考试记录
+    // 请求学生考试记录
     getExamedPaper() {
       const params = {
         page: 1,
@@ -89,6 +94,12 @@ export default {
       }
       // 发起请求
       this.$store.dispatch('exam/getExamedPaper', params).then(res => {
+        this.records = res.data
+      })
+    },
+    // 获取教师考试记录
+    getPapersAllCount() {
+      this.$store.dispatch('paper/getPapersAllCount').then(res => {
         this.records = res.data
       })
     }

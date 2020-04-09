@@ -3,7 +3,8 @@ import {
   getPapers,
   deletePaper,
   getPaperDetail,
-  changePublish
+  changePublish,
+  getPapersAllCount
 } from '@/api/paper'
 
 const actions = {
@@ -53,6 +54,12 @@ const actions = {
   // 更改试卷发布状态
   async changePublish(ctx, data) {
     const res = await changePublish(data)
+    return res
+  },
+
+  // 获取教师首页试卷信息
+  async getPapersAllCount(ctx) {
+    const res = await getPapersAllCount()
     return res
   }
 }

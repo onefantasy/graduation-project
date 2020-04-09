@@ -1,6 +1,6 @@
 <template>
   <div>
-    错题集
+    收藏题集
   </div>
 </template>
 

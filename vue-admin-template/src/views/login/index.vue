@@ -115,6 +115,7 @@ export default {
     }
   },
   created() {
+    // 加载背景图片
     this.bg = require('@/assets/image/bg.jpg')
   },
   methods: {

@@ -271,6 +271,13 @@ export const asyncRoutes = [
         name: 'Collection',
         component: () => import('@/views/question/collection/index'),
         meta: { title: '收藏题集' }
+      },
+      {
+        path: 'editQuestion',
+        name: 'EditQuestion',
+        component: () => import('@/views/question/editQuestion/index'),
+        meta: { title: '编辑试题' },
+        hidden: true
       }
     ]
   },

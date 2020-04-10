@@ -1,7 +1,7 @@
 <template>
   <div class="collection">
     <!-- 选择题目类型 开始 -->
-    <el-form>
+    <!-- <el-form>
       <el-form-item label="题型">
         <el-select v-model="type" placeholder="请选择" @change="getCollecQuestions">
           <el-option
@@ -12,26 +12,38 @@
           />
         </el-select>
       </el-form-item>
-    </el-form>
+    </el-form> -->
+    <div class="search-box">
+      <el-select v-model="type" placeholder="请选择" @change="getCollecQuestions">
+        <el-option
+          v-for="item in questionTypes"
+          :key="item.type"
+          :label="item.name"
+          :value="item.type"
+        />
+      </el-select>
+    </div>
     <!-- 选择题目类型 结束 -->
 
     <el-table :data="tableData" style="width: 100%" border>
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <div v-html="scope.row.content" />
-          <div v-for="item in selectOptions" :key="item">
-            <div v-if="scope.row[item]" class="flex-box">
-              <span class="lh44">{{ item }}、</span>
-              <span v-html="scope.row[item]" />
+          <div class="expand-box">
+            <div v-html="scope.row.content" />
+            <div v-for="item in selectOptions" :key="item">
+              <div v-if="scope.row[item]" class="flex-box">
+                <span class="lh44">{{ item }}、</span>
+                <span v-html="scope.row[item]" />
+              </div>
             </div>
-          </div>
-          <div class="lh44">分值：{{ scope.row.score }}</div>
-          <div v-if="type !== 'essays'">参考答案：{{ scope.row.rightKey }}</div>
-          <div v-else>
-            <p>
-              参考答案：
-            </p>
-            <div v-html="scope.row.rightKey" />
+            <div class="lh44">分值：{{ scope.row.score }}</div>
+            <div v-if="type !== 'essays'">参考答案：{{ scope.row.rightKey }}</div>
+            <div v-else>
+              <p>
+                参考答案：
+              </p>
+              <div v-html="scope.row.rightKey" />
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -47,6 +59,13 @@
       <el-table-column label="来源" prop="from" align="center" show-overflow-tooltip />
 
       <el-table-column label="作者" prop="auth" align="center" show-overflow-tooltip />
+
+      <el-table-column fixed="right" label="操作" width="180" align="center" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <el-button type="primary" size="small" @click="editQuestion(scope.row.qid)"><i class="el-icon-edit" /> 编辑</el-button>
+          <el-button type="danger" size="small" @click="deleteQuestion(scope.row.qid)"><i class="el-icon-remove-outline" /> 删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -97,6 +116,34 @@ export default {
         this.tableData = res.data
         this.total = res.total
       })
+    },
+    // 编辑试题
+    editQuestion(qid) {
+      this.$router.push(`/question/editQuestion?type=${this.type}&qid=${qid}`)
+    },
+    // 删除试题
+    async deleteQuestion(qid) {
+      let flag = false
+      await this.$confirm('确定删除改试题？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        flag = false
+      }).catch(() => {
+        flag = true
+      })
+      if (flag) return false
+      // 参数
+      const params = {
+        type: this.type,
+        qid
+      }
+      // 发出请求
+      this.$store.dispatch('question/deleteCollectedQuestion', params).then(res => {
+        this.$message.success('删除成功！')
+        this.getCollecQuestions()
+      })
     }
   }
 }
@@ -112,6 +159,14 @@ export default {
 
   .lh44 {
     line-height: 44px;
+  }
+
+  .search-box {
+    margin-bottom: 10px;
+    background: #E4E7ED;
+    padding: 5px;
+    border: 1px solid #D3D6DC;
+    border-radius: 5px;
   }
 }
 .demo-table-expand {

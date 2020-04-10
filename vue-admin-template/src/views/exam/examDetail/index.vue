@@ -38,7 +38,9 @@
                 <!-- 试题序号与题目 开始 -->
                 <div class="flex-box">
                   <span style="line-height: 50px;">{{ index }}、</span>
-                  <div v-html="unit.content" />
+                  <el-tooltip effect="dark" content="点击收藏该题" placement="top-start">
+                    <div class="issues" @click="collectQuestion(unit, item, config)" v-html="unit.content" />
+                  </el-tooltip>
                 </div>
                 <!-- 试题序号与题目 结束 -->
                 <!-- 选项 开始 -->
@@ -61,6 +63,7 @@
                   <i v-if="!(unit.isTrue == null) && unit.isTrue" class="isTrue-tip green el-icon-check" />
                   <i v-if="!(unit.isTrue == null) && !unit.isTrue" class="isTrue-tip red el-icon-close" />
                 </p>
+
               </div>
             </div>
           </div>
@@ -68,12 +71,29 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <el-dialog
+      :visible="visable"
+      title="收藏试题"
+      :show-close="false"
+      @closed="closeDialog"
+    >
+      <MDinput v-model="collectionTitle" class="paperId-input">
+        <span>标题</span>
+      </MDinput>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visable = false"><i class="el-icon-close" /> 取 消</el-button>
+        <el-button type="primary" @click="submitCollection"><i class="el-icon-circle-plus-outline" /> 收 藏</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import MDinput from '@/components/MDinput'
 export default {
   components: {
+    MDinput
   },
   data() {
     return {
@@ -102,7 +122,19 @@ export default {
       answersRecords: [],
 
       // 需要渲染的试卷数据
-      paper: []
+      paper: [],
+
+      // 收藏的标志
+      collection: '',
+
+      // 收藏弹窗的显示与隐藏
+      visable: false,
+
+      // 收藏试题的title
+      collectionTitle: '',
+
+      // 收藏题目的数据
+      collectionIssue: {}
     }
   },
   created() {
@@ -114,6 +146,8 @@ export default {
     this.questionTypes = this.$store.getters.constant.question.types
     // 获取中文序号
     this.chineseOrderNumber = this.$store.getters.constant.chineseOrderNumber
+    // 从仓库获取收藏的标志
+    this.collection = this.$store.getters.constant.question.state.collection
 
     // 请求试卷信息
     this.getPaperDetail()
@@ -211,6 +245,39 @@ export default {
         return '尚未批改'
       }
       return score
+    },
+    // 收藏题目
+    collectQuestion(unit, item, config) {
+      const question = {}
+      question.content = Object.assign({}, unit)
+      delete question.content.qid
+      delete question.content.createdAt
+      delete question.content.paperId
+      question.content.state = this.collection
+      question.type = item.type
+      question.content.from = config.paperTitle
+      question.content.auth = config.user.name
+      this.collectionIssue = question
+      this.visable = true
+    },
+    // 提交收藏的题目
+    submitCollection() {
+      if (!this.collectionTitle) {
+        this.$message.warning('请填写改题目标题，用于区分其他收藏的题目！')
+        return false
+      }
+      this.collectionIssue.content.title = this.collectionTitle
+      this.visable = false
+      // 发起请求
+      this.$store.dispatch('question/saveQuestion', this.collectionIssue).then(res => {
+        this.$message.success('收藏成功！')
+        this.visable = false
+      })
+    },
+    // 关闭收藏弹窗的回调
+    closeDialog() {
+      this.collectionTitle = ''
+      this.collectionIssue = {}
     }
   }
 }
@@ -234,6 +301,14 @@ export default {
 
   .isTrue-tip {
     font-weight: 700;
+  }
+
+  .issues {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 </style>

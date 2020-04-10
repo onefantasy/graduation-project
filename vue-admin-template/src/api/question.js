@@ -26,3 +26,21 @@ export function getCollecQuestions(params) {
     params
   })
 }
+
+// 根据qid删除对应的收藏的试题
+export function deleteCollectedQuestion(params) {
+  return request({
+    url: '/question/deleteCollectedQuestion',
+    method: 'get',
+    params
+  })
+}
+
+// 根据qid获取试题信息
+export function getQuestionByQid(params) {
+  return request({
+    url: '/question/getQuestionByQid',
+    method: 'get',
+    params
+  })
+}

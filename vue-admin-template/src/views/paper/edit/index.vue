@@ -27,6 +27,7 @@
             <el-button icon="el-icon-arrow-left" :disabled="questionsIndex.indexOf(currentQuestionIndex) === 0" @click="preQuestion">上一题</el-button>
             <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
             <el-button icon="el-icon-finished" type="primary" class="fr" @click="saveQuestion">保存</el-button>
+            <el-button type="info" class="fr" @click="getCollection"><svg-icon icon-class="store" /> 题库</el-button>
           </div>
           <question-editor v-if="showEditor" ref="questionEditor" :question-info="currentQuestion" />
         </el-main>
@@ -37,6 +38,36 @@
     <!-- 返回顶部组件 开始 -->
     <back-to-top ref="backToTop" />
     <!-- 返回顶部组件 结束 -->
+
+    <!-- 收藏列表 开始 -->
+    <el-dialog
+      :visible.sync="visble"
+    >
+      <span slot="title" style="color: #666; font-weight: 700;"><svg-icon icon-class="store" /> 收藏列表</span>
+      <el-table :data="collections" style="width: 100%" max-height="400">
+        <el-table-column label="标题" prop="title" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-popover
+              ref="popover1"
+              placement="top-start"
+              title="试题"
+              trigger="hover"
+            >
+              <div v-html="scope.row.content" />
+              <span slot="reference" style="cursor: pointer">{{ scope.row.title }}</span>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column label="分值" prop="score" align="center" show-overflow-tooltip />
+        <el-table-column label="来源" prop="from" align="center" show-overflow-tooltip />
+        <el-table-column fix="right" width="110">
+          <template slot-scope="scope">
+            <el-button type="primary" @click="useCollection(scope.row)"><svg-icon icon-class="use" /> 使用</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+    <!-- 收藏列表 结束 -->
   </div>
 </template>
 
@@ -79,7 +110,13 @@ export default {
       questionList: [],
 
       // 是否显示编辑区域
-      showEditor: true
+      showEditor: true,
+
+      // 收藏的题目集合
+      collections: [],
+
+      // 是否显示收藏列表
+      visble: false
     }
   },
   created() {
@@ -123,30 +160,6 @@ export default {
     },
     // 选中试题列表中的某一项
     async selectMenuItem(e) {
-      // 同样路径不进行任何操作
-      // if (e === this.currentQuestionIndex) return true
-      // 判断当前内容是否需要保存
-      // let flag = this.$refs['questionEditor'].isNeedSave()
-      // // 保存提示
-      // flag && await this.$confirm('编辑的内容尚未保存，确定要离开？', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   flag = false
-      // }).catch(() => {
-      //   flag = true
-      // })
-      // if (flag) {
-      //   const old = this.currentQuestionIndex
-      //   this.currentQuestionIndex = e
-      //   // 直接改变没有效果，所以使用定时器延迟修改
-      //   // 定时器设定当前编辑的试题的索引
-      //   setTimeout(() => {
-      //     this.currentQuestionIndex = old
-      //   }, 100)
-      //   return false
-      // }
       const arr = e.split('-')
       // 更改指定题目
       this.currentQuestionIndex = e
@@ -247,10 +260,38 @@ export default {
       this.$store.dispatch('question/saveQuestion', data).then(res => {
         // 保存成功提醒
         this.$message.success('保存成功！')
-      }).catch(() => {
-        // 保存失败提醒
-        this.$message.error('保存失败！')
+        res.data && (this.questions[arr[0]][arr[1]].qid = res.data.qid)
       })
+    },
+    // 获取收藏的题目
+    getCollection() {
+      // 拆分当前索引，用于找寻存储空间
+      const arr = this.currentQuestionIndex.split('-')
+      // 参数
+      const params = {
+        state: this.$store.getters.constant.question.state.collection,
+        type: arr[0]
+      }
+      // 发起请求
+      this.$store.dispatch('question/getCollecQuestions', params).then(res => {
+        this.collections = res.data
+        this.visble = true
+      })
+    },
+    // 使用仓库中的题目
+    useCollection(row) {
+      // 拆分当前索引，用于找寻存储空间
+      const arr = this.currentQuestionIndex.split('-')
+      // 获取对应的键
+      const keys = Object.keys(this.questionContent[arr[0]])
+      const content = {}
+      keys.map(item => {
+        content[item] = row[item]
+      })
+      this.questions[arr[0]][arr[1]] && this.questions[arr[0]][arr[1]].qid && (content.qid = this.questions[arr[0]][arr[1]].qid)
+      this.questions[arr[0]][arr[1]] = content
+      this.selectMenuItem(this.currentQuestionIndex)
+      this.visble = false
     }
   }
 }

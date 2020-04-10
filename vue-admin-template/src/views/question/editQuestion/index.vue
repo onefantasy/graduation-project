@@ -4,7 +4,7 @@
 
       <!-- 选择题型 开始 -->
       <el-form-item label="题型">
-        <el-select v-model="question.type" placeholder="请选择" :disabled="!!questionInfo.type" @change="changeType">
+        <el-select v-model="question.type" placeholder="请选择" disabled @change="changeType">
           <el-option
             v-for="item in questionTypes"
             :key="item.type"
@@ -16,7 +16,7 @@
       <!-- 选择提醒 结束 -->
 
       <!-- 题目标题（用于收藏） 开始 -->
-      <div v-if="!questionInfo.type">
+      <div>
         <el-form-item label="标题" prop="title">
           <el-input v-model="question.title" placeholder="请求输入此题目的标题，用于在收藏列表中展示" />
         </el-form-item>
@@ -53,9 +53,9 @@
       <!-- 正确答案的填写格式 结束  -->
 
       <!-- 保存按钮 开始 -->
-      <el-form-item v-if="!questionInfo.type">
+      <el-form-item>
         <el-button icon="el-icon-finished" type="primary" @click="save">保存</el-button>
-        <el-button icon="el-icon-refresh-left" @click="changeType">重置</el-button>
+        <el-button icon="el-icon-refresh-left" @click="getQuestionData">重置</el-button>
       </el-form-item>
       <!-- 保存按钮 结束 -->
     </el-form>
@@ -111,25 +111,11 @@ export default {
         'content.rightKey': [{ required: true, message: '请填写正确答案', tigger: 'blur' }]
       },
 
-      // 本次题目所属的类型
-      state: '',
-
       // 当前编辑的内容是否已经保存
       isSaved: false,
 
-      // 父组件控制该组件的参数
-      /*
-       * 该值接收父组件传来的试题信息（{ type, content }）
-       * type 为试题类型，如果存在，则禁止更改试题类型
-       * content 为试题的存储内容
-      */
-      questionInfo: {
-        type: '',
-        content: {}
-      },
-
-      // 编辑的试题来源
-      from: '本人编辑'
+      // 请求试题信息的备份
+      backUp: ''
     }
   },
   created() {
@@ -138,12 +124,15 @@ export default {
     // 从仓库获取所有的试题类型
     this.questionTypes = this.$store.getters.constant.question.types
     // 初始化题目的存储内容
-    this.question.type = this.questionTypes[0].type
+    this.question.type = this.$route.query.type || this.questionTypes[0].type
     this.question.content = JSON.parse(JSON.stringify(this.questionContent[this.question.type]))
     // 从仓库获取所有的题目字段与对应的提示
     this.fieldTip = this.$store.getters.constant.question.fieldTip
     // 获取判断题选项
     this.judgeOptions = this.$store.getters.constant.judgeOptions
+
+    // 获取需要编辑的试题的信息
+    this.getQuestionByQid()
   },
   methods: {
     // 改变题目类型时，更改试题存储格式
@@ -161,64 +150,39 @@ export default {
         this.$message.warning('请先将试题信息完善再进行提交！')
         return false
       }
-      this.question.content.state = this.$store.getters.constant.question.state.collection
-      this.question.content.from = this.from
-      this.question.content.auth = this.$store.getters.userInfo.name
+      this.question.content.qid = this.backUp.qid
       this.question.title && (this.question.content.title = this.question.title)
       if (this.question.type === 'essays') {
         this.question.content.rightKey = this.question.content.rightKey.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
       }
-      if (['singles', 'multiples'].indexOf(this.question.type) !== -1) {
-        this.question.content.rightKey = this.question.content.rightKey.trim().split('').sort().join('').toLocaleUpperCase()
-      }
       this.$store.dispatch('question/saveQuestion', this.question).then(res => {
         this.$message.success(res.message)
-        // delete this.question.content.title
-        // delete this.question.content.state
-        // delete this.question.content.from
-        // delete this.question.content.auth
-        // this.$refs['form'].resetFields()
-        this.changeType()
-      }).catch(() => {
-        delete this.question.content.state
+        // 删除当前页面的affix
+        this.$store.commit('tagsView/DEL_VISITED_VIEW', this.$route)
+        this.$router.go(-1)
       })
     },
-    // 获取已填写的试题信息（主要给父组件使用）
-    getQuestionInfo() {
-      // 调用该函数时，表示试题信息已经保存
-      this.isSaved = true
-      if (this.question.type === 'essays') {
-        this.question.content.rightKey = this.question.content.rightKey.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
+    // 根据qid获取试题信息
+    getQuestionByQid() {
+      // 参数
+      const params = {
+        type: this.question.type,
+        qid: this.$route.query.qid
       }
-      if (['singles', 'multiples'].indexOf(this.question.type) !== -1) {
-        this.question.content.rightKey = this.question.content.rightKey.trim().split('').sort().join('').toLocaleUpperCase()
-      }
-      return this.question.content
-    },
-    // 判断当前编辑的内容是否需要保存或者是否一境保存（主要给父组件使用）
-    isNeedSave() {
-      if (this.isSaved) return false
-      const content = this.question.content
-      const arrKeys = Object.keys(content)
-      for (let i = 0; i < arrKeys.length; i++) {
-        if (content[arrKeys[i]]) return true
-      }
-      return false
-    },
-    // 父组件更改子组件的存储格式以及存储类型(主要给父组件使用)
-    changeQuestionInfo(newValue) {
-      // 更改当前 是否已经保存 的标志的值
-      this.isSaved = false
-      // 重置输入的内容
-      this.$refs['form'].resetFields()
-      // 更新存储格式
-      this.question.type = newValue.type
-      this.changeType(newValue)
-      this.questionInfo = newValue
-      const arr = Object.keys(this.question.content)
-      arr.map(item => {
-        this.question.content[item] = newValue.content[item] || ''
+      // 发起请求
+      this.$store.dispatch('question/getQuestionByQid', params).then(res => {
+        this.backUp = res.data
+        this.getQuestionData()
       })
+    },
+    // 将请求的试题信息渲染到页面的数据上
+    getQuestionData() {
+      this.changeType()
+      const keys = Object.keys(this.question.content)
+      keys.map(item => {
+        this.question.content[item] = this.backUp[item]
+      })
+      this.question.title = this.backUp.title
     }
   }
 }

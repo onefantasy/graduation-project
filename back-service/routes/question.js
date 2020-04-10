@@ -24,9 +24,9 @@ router.post('/save', async (ctx, next) => {
   // 需要进行操作的表
   const table = params.type
 
-  if (params.qid) {
+  if (params.content.qid) {
     // 存在qid存在，说明需要更改试题信息
-    const where = { qid: params.qid }
+    const where = { qid: params.content.qid, account: ctx.account }
     const data = await questions[table].findOne({ where })
     const res = data.update(params.content, { where })
     ctx.body = {
@@ -95,6 +95,35 @@ router.get('/getCollecQuestions', async (ctx, next) => {
     message: data ? '查询成功' : '查询失败',
     data,
     total
+  }
+})
+
+// 根据qid删除收藏的试题
+router.get('/deleteCollectedQuestion', async (ctx, next) => {
+  const table = ctx.query.type
+  const where = {
+    account: ctx.account,
+    qid: ctx.query.qid
+  }
+  const res = await questions[table].destroy({ where })
+  ctx.body = {
+    code: res ? 200 : 103,
+    message: res ? '删除成功' : '删除失败'
+  }
+})
+
+// 根据qid获取试题信息
+router.get('/getQuestionByQid', async (ctx, next) => {
+  const where = {
+    account: ctx.account,
+    qid: ctx.query.qid
+  }
+  const table = ctx.query.type
+  const data = await questions[table].findOne({ where })
+  ctx.body = {
+    code: data ? 200 : 103,
+    message: data ? '查询成功' : '查询失败',
+    data
   }
 })
 

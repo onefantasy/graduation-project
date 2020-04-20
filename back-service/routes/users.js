@@ -62,7 +62,7 @@ router.post('/login', async (ctx, next) => {
     // 对密码进行校验，如果不对，则返回下面语句
     ctx.body = {
       code: 103,
-      message: '账号或密码错误'
+      message: '密码错误'
     }
   } else {
     // 对密码进行校验，如果密码正确，则返回下面语句

@@ -118,6 +118,7 @@ export default {
       // 对表单进行校验
       this.$refs['registerForm'].validate()
         .then(result => {
+          //  通过验证
           return this.$store.dispatch('user/register', this.userInfo)
         })
         .then(res => {
@@ -126,12 +127,14 @@ export default {
               message: '注册成功，快去登录吧',
               type: 'success'
             })
+            // 重置表单
             this.$refs['registerForm'].resetFields()
             this.$emit('registerSuccess')
           }
         })
         .catch(err => {
           if (err !== false) return false
+          // 没通过验证的提示
           this.$message({
             message: '请先将表单填写完整再提交',
             type: 'warning'

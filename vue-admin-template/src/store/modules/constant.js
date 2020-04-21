@@ -96,7 +96,13 @@ const state = {
     questionType: ''
   },
   // 默认头像
-  defaultHeadIcon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+  defaultHeadIcon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+  // 身份
+  roles: {
+    'S': '学生',
+    'T': '教师'
+  },
+  sexs: ['女', '男']
 }
 
 const mutations = {}

@@ -28,12 +28,10 @@ const answer = require('./routes/answer')
 app.use(
   cors({
     origin: function(ctx) { //设置允许来自指定域名请求
-      console.log('允许请求的域名：', ctx.url)
       if (ctx.url === '/test') {
         return '*' // 允许来自所有域名请求
       }
-      // return ctx.url //只请求的域名
-      return 'http://localhost:9528' // 开发测试用
+      return ctx.header.origin // 允许所有域名进行请求
     },
     maxAge: 5, //指定本次预检请求的有效期，单位为秒。
     credentials: true, //是否允许发送Cookie

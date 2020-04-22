@@ -1,4 +1,15 @@
-import { login, logout, getInfo, register, setInfo, changePassword } from '@/api/user'
+import {
+  login,
+  logout,
+  getInfo,
+  register,
+  setInfo,
+  changePassword,
+  getUserList,
+  adminChangePassword,
+  adminChangeRole,
+  adminDeleteAccount
+} from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -110,6 +121,30 @@ const actions = {
   // 更新密码
   async changePassword({ commit }, data) {
     const res = await changePassword(data)
+    return res
+  },
+
+  // 获取用户列表
+  async getUserList({ commit }, params) {
+    const res = await getUserList(params)
+    return res
+  },
+
+  // 管理员：更改用户密码
+  async adminChangePassword(ctx, data) {
+    const res = await adminChangePassword(data)
+    return res
+  },
+
+  // 管理员：更改用户身份
+  async adminChangeRole(ctx, data) {
+    const res = await adminChangeRole(data)
+    return res
+  },
+
+  // 管理员：删除用户
+  async adminDeleteAccount(ctx, data) {
+    const res = await adminDeleteAccount(data)
     return res
   }
 }

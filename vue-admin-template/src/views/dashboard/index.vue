@@ -9,6 +9,7 @@
     <el-card shadow="never" class="borderBottom">
       <div slot="header" class="clearfix header">
         <mallki class-name="mallki-text" text="个人信息" />
+        <span class="more" @click="goPage('/userInfo/index')">更改 <i class="el-icon-caret-right" /> </span>
       </div>
       <div>
         <el-row :gutter="20">
@@ -51,6 +52,7 @@
     <el-card shadow="never" class="borderBottom">
       <div slot="header" class="clearfix header">
         <mallki class-name="mallki-text" text="考试情况" />
+        <span class="more" @click="goPage('/paper/mine')">更多 <i class="el-icon-caret-right" /> </span>
       </div>
       <div class="records">
         <div v-if="!records.length" class="not-examRecord">暂无记录</div>
@@ -116,7 +118,6 @@ export default {
       // 请求学生考试记录
       this.getExamedPaper()
     }
-    console.log('用户信息：', this.userInfo)
   },
   methods: {
     // 跳转到其他页面
@@ -174,6 +175,11 @@ $fontWeight: 700;
 
   .borderBottom {
     border-bottom: 2px solid $contentColor;
+  }
+
+  .more {
+    cursor: pointer;
+    float: right;
   }
 
   .records {

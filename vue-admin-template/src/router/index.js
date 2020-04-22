@@ -282,9 +282,6 @@ export const asyncRoutes = [
     ]
   },
 
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true },
-
   {
     path: '/userInfo',
     component: Layout,
@@ -294,7 +291,21 @@ export const asyncRoutes = [
       component: () => import('@/views/userInfo/index'),
       meta: { title: '个人中心', icon: 'user' }
     }]
-  }
+  },
+
+  {
+    path: '/userList',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'UserList',
+      component: () => import('@/views/userList/index'),
+      meta: { title: '用户列表', icon: 'peoples', roles: ['admin', 'T'] }
+    }]
+  },
+
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({

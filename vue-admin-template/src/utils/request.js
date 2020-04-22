@@ -3,11 +3,25 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+const timeout = 5000
+
+// // 请求遮罩 开始
+// let load = null
+// function closeLoad() {
+//   if (load) load.close()
+//   load = null
+// }
+// function createLoad() {
+//   if (load) return false
+//   else load = Loading.service({ fullscreen: true, text: '操作执行中，请稍等······' })
+// }
+// // 请求遮罩 结束
+
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout // request timeout
 })
 
 // request interceptor
@@ -21,6 +35,7 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
     }
+
     return config
   },
   error => {

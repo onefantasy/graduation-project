@@ -59,7 +59,6 @@ export default {
     },
     backToTop(top = 0) {
       if (this.isMoving) return
-      console.log(1)
       const start = window.pageYOffset
       let i = 0
       this.isMoving = true

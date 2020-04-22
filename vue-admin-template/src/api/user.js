@@ -49,3 +49,39 @@ export function changePassword(data) {
     data
   })
 }
+
+// 获取用户列表
+export function getUserList(params) {
+  return request({
+    url: '/users/userList',
+    method: 'get',
+    params
+  })
+}
+
+// 管理员：更改用户密码
+export function adminChangePassword(data) {
+  return request({
+    url: '/users/adminChangePassword',
+    method: 'post',
+    data
+  })
+}
+
+// 管理员：更改用户角色
+export function adminChangeRole(data) {
+  return request({
+    url: '/users/adminChangeRole',
+    method: 'post',
+    data
+  })
+}
+
+// 管理员：删除账号
+export function adminDeleteAccount(data) {
+  return request({
+    url: '/users/adminDeleteAccount',
+    method: 'post',
+    data
+  })
+}

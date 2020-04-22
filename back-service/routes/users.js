@@ -164,4 +164,66 @@ router.post('/changePassword', async (ctx, next) => {
   }
 })
 
+// 管理员：强制更换密码
+router.post('/adminChangePassword', async (ctx, next) => {
+  const params = ctx.request.body
+  // 加密用的盐
+  const slat = bcrypt.genSaltSync(10)
+  // 插入数据库时，对密码进行加密
+  const password = bcrypt.hashSync(params.password, slat)
+  const res = await users.update({ password }, { where: { account: params.account } })
+  ctx.body = {
+    code: res ? 200 : 103,
+    message: res ? '更新成功' : '更新失败'
+  }
+})
+
+// 管理员：更换账号身份
+router.post('/adminChangeRole', async (ctx, next) => {
+  const params = ctx.request.body
+  const where = { account: params.account }
+  const res = await users.update({ role: params.role }, { where })
+  ctx. body = {
+    code: res ? 200 : 103,
+    message: res ? '更新成功' : '更新失败'
+  }
+})
+
+// 管理员：删除账号
+router.post('/adminDeleteAccount', async (ctx, next) => {
+  const params = ctx.request.body
+  const where = { account: params.account }
+  const res = await users.destroy({ where })
+  ctx.body = {
+    code: res ? 200 : 103,
+    message: res ? '删除成功' : '删除失败'
+  }
+})
+
+// 获取用户列表
+router.get('/userList', async (ctx, next) => {
+  const params = ctx.query
+  const searchKeys = ['account', 'name', 'number', 'role']
+  const where = {}
+  searchKeys.map(item => {
+    params[item] && (where[item] = { [Op.substring]: params[item] })
+  })
+  const { rows: data, count: total } = await users.findAndCountAll({
+    where,
+    offset: (+params.page - 1) * +params.pageSize,
+    limit: +params.pageSize,
+    order: [
+      ['createdAt', 'DESC']
+    ],
+    attributes: { exclude: ['password'] }
+  })
+  const flag = !!data
+  ctx.body = {
+    code: flag ? 200 : 104,
+    message: flag ? '查询成功' : '查询失败',
+    data,
+    total
+  }
+})
+
 module.exports = router

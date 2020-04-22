@@ -5,7 +5,7 @@
         <span slot="label"><i class="el-icon-document" /> 考过的试卷</span>
         <examed-paper />
       </el-tab-pane>
-      <el-tab-pane v-if="role === 'T'" label="创建的试卷" name="created">
+      <el-tab-pane v-if="['T', 'admin'].indexOf(role) !== -1" label="创建的试卷" name="created">
         <span slot="label"><i class="el-icon-edit-outline" /> 创建的试卷</span>
         <my-paper />
       </el-tab-pane>

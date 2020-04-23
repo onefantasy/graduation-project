@@ -56,7 +56,8 @@
                 <p>
                   分值：{{ unit.score }}
                 </p>
-                <p>参考答案：{{ unit.rightKey }}</p>
+                <!-- <p>参考答案：{{ unit.rightKey }}</p> -->
+                <p>参考答案：<span v-html="unit.rightKey" /></p>
                 <p>我的答案：
                   <span v-if="item.type !== 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }">{{ unit.mineAnswer }}</span>
                   <span v-if="item.type === 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }" v-html="unit.mineAnswer" />
@@ -282,6 +283,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.examDetail-box {
+  .issues {
+    img {
+      width: 100%;
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .examDetail-box {

@@ -28,12 +28,12 @@
       </el-aside>
       <!-- 题目侧边栏 结束 -->
 
-      <!-- 编辑试卷题目 开始 -->
+      <!-- 题目 开始 -->
       <el-container>
         <el-main>
           <div style="padding: 0 20px 0 100px;">
             <el-button icon="el-icon-arrow-left" :disabled="questionsIndex.indexOf(currentQuestionIndex) === 0" @click="preQuestion">上一题</el-button>
-            <timer v-if="config.time" ref="timer" class="timer" :time="config.time" @timeout="submitPaper(true)" />
+            <timer v-if="config.time" ref="timer" class="timer" :time="config.time" @timeout="timeoutSubmit()" />
             <el-button :disabled="questionsIndex.indexOf(currentQuestionIndex) === questionsIndex.length - 1" class="fr" @click="nextQuestion">下一题 <i class="el-icon-arrow-right" /> </el-button>
             <el-button icon="el-icon-finished" type="primary" class="fr" style="margin-right: 10px;" @click="submitPaper(false)">交卷</el-button>
           </div>
@@ -48,7 +48,7 @@
           </div>
         </el-main>
       </el-container>
-      <!-- 编辑试卷题目 结束 -->
+      <!-- 题目 结束 -->
     </el-container>
   </div>
 </template>
@@ -330,6 +330,11 @@ export default {
       }
       // 交卷
       await this.submitPaper(true)
+    },
+    // 超时交卷
+    timeoutSubmit() {
+      this.$message.warning('考试时间结束，开始交卷！')
+      this.submitPaper(true)
     }
   }
 }

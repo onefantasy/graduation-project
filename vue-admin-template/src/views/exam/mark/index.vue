@@ -12,7 +12,7 @@
                 <!-- 试题序号与题目 开始 -->
                 <div class="flex-box">
                   <span style="line-height: 50px;">{{ index }}、</span>
-                  <div v-html="unit.content" />
+                  <div class="issues" v-html="unit.content" />
                 </div>
                 <!-- 试题序号与题目 结束 -->
                 <!-- 选项 开始 -->
@@ -25,7 +25,7 @@
                   </div>
                 </div>
                 <!-- 选项 结束 -->
-                <p>参考答案：{{ unit.rightKey }}</p>
+                <p>参考答案：<span v-html="unit.rightKey" /></p>
                 <p>考生答案：
                   <span v-if="item.type !== 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }">{{ unit.mineAnswer }}</span>
                   <span v-if="item.type === 'essays'" :class="{ green: unit.isTrue !== null && unit.isTrue, red: unit.isTrue !== null && !unit.isTrue }" v-html="unit.mineAnswer" />
@@ -268,6 +268,12 @@ export default {
 .mark-box {
   .el-scrollbar__wrap{
     overflow-x: hidden;
+  }
+
+  .issues {
+    img {
+      width: 100%;
+    }
   }
 }
 </style>

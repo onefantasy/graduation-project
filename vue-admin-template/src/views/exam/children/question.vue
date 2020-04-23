@@ -2,7 +2,7 @@
   <div class="question">
     <div v-if="issue.content">
       <!-- 题目 开始 -->
-      <div v-html="issue.content" />
+      <div class="issues" v-html="issue.content" />
       <!-- 题目 结束 -->
       <!-- 选择题选项 开始 -->
       <div v-if="issue[selectOptions[0]]">
@@ -172,6 +172,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.question {
+  .issues {
+    img {
+      width: 100%;
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .question {

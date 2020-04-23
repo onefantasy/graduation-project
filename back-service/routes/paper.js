@@ -9,6 +9,16 @@ const users = require('../model/users')
 const exams = require('../model/examRecords')
 const Op = require('sequelize').Op
 
+// 试题
+// 加载各种题型的模型实例
+const questions = {
+  singles: require('../model/singles'),
+  multiples: require('../model/multiples'),
+  judges: require('../model/judges'),
+  completions: require('../model/completions'),
+  essays: require('../model/essays')
+}
+
 router.prefix('/paper')
 
 router.get('/', async (ctx, next) => {
@@ -84,6 +94,10 @@ router.get('/getPapers', async (ctx, next) => {
 router.post('/detelePaper', async (ctx, next) => {
   const params = ctx.request.body
   const where = { account: ctx.account, paperId: params.paperId }
+  // 级联删除试卷试题
+  for (const key in questions) {
+    await questions[key].destroy({ where })
+  }
   const res = await papers.destroy({ where })
   ctx.body = {
     code: res ? 200 : 103,

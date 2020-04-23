@@ -41,7 +41,9 @@ const users = sequelize.define('users', {
   },
   major: {
     type: Sequelize.STRING
-  }
+  },
+  // 最近登陆时间
+  latestTime: Sequelize.DATE
 }, {freezeTableName: true})
 
 // 创建管理员账号 开始

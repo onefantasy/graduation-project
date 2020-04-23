@@ -68,10 +68,16 @@
           </template>
         </el-table-column>
 
+        <el-table-column prop="latestTime" label="上次登陆" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ scope.row.latestTime ? formatTime(scope.row.latestTime) : '' }}
+          </template>
+        </el-table-column>
+
         <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="210">
           <template slot-scope="scope">
-            <el-button icon="el-icon-sort" size="mini" type="success" @click="changeRole(scope.row)">变更身份</el-button>
-            <el-button icon="el-icon-remove-outline" size="mini" type="danger" @click="deleteAccount(scope.row)">删除</el-button>
+            <el-button v-if="scope.row.role !== 'admin'" icon="el-icon-sort" size="mini" type="success" @click="changeRole(scope.row)">变更身份</el-button>
+            <el-button v-if="scope.row.role !== 'admin'" icon="el-icon-remove-outline" size="mini" type="danger" @click="deleteAccount(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

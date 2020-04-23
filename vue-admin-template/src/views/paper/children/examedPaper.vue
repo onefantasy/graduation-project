@@ -29,37 +29,37 @@
 
         <el-table-column prop="scoreExam" label="总得分" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ showScore(scope.row.scoreExam) }} / {{ scope.row.paper.totalScore }}
+            {{ showScore(scope.row.scoreExam) }} / {{ scope.row.paper ? scope.row.paper.totalScore : '无总分' }}
           </template>
         </el-table-column>
 
         <el-table-column prop="singlesExam" label="单选得分" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ showScore(scope.row.singlesExam) }} / {{ scope.row.paper.singlesScore }}
+            {{ showScore(scope.row.singlesExam) }} / {{ scope.row.paper ? scope.row.paper.singlesScore : '无单选总分' }}
           </template>
         </el-table-column>
 
         <el-table-column prop="multiplesExam" label="多选得分" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ showScore(scope.row.multiplesExam) }} / {{ scope.row.paper.multiplesScore }}
+            {{ showScore(scope.row.multiplesExam) }} / {{ scope.row.paper ? scope.row.paper.multiplesScore : '无多选总分' }}
           </template>
         </el-table-column>
 
         <el-table-column prop="judgesExam" label="判断得分" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ showScore(scope.row.judgesExam) }} / {{ scope.row.paper.judgesScore }}
+            {{ showScore(scope.row.judgesExam) }} / {{ scope.row.paper ? scope.row.paper.judgesScore : '无判断总分' }}
           </template>
         </el-table-column>
 
         <el-table-column prop="completionsExam" label="填空得分" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ showScore(scope.row.completionsExam) }} / {{ scope.row.paper.completionsScore }}
+            {{ showScore(scope.row.completionsExam) }} / {{ scope.row.paper ? scope.row.paper.completionsScore : '无填空总分' }}
           </template>
         </el-table-column>
 
         <el-table-column prop="essaysExam" label="问答得分" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ showScore(scope.row.essaysExam) }} / {{ scope.row.paper.essaysScore }}
+            {{ showScore(scope.row.essaysExam) }} / {{ scope.row.paper ? scope.row.paper.essaysScore : '无问答总分' }}
           </template>
         </el-table-column>
 
@@ -71,7 +71,7 @@
 
         <el-table-column label="操作" align="center" show-overflow-tooltip fixed="right" width="120">
           <template slot-scope="scope">
-            <el-button icon="el-icon-view" size="mini" type="success" @click="showDetail(scope.row.eid, scope.row.paper.paperId)">查看详情</el-button>
+            <el-button icon="el-icon-view" size="mini" type="success" @click="showDetail(scope.row.eid, scope.row.paper)">查看详情</el-button>
           </template>
         </el-table-column>
 
@@ -163,7 +163,12 @@ export default {
       return score
     },
     // 查看某次考试记录的详情
-    showDetail(eid, pid) {
+    showDetail(eid, paper) {
+      const pid = paper ? paper.paperId : false
+      if (!pid) {
+        this.$message.warning('该试卷不存在！')
+        return false
+      }
       this.$router.push(`/exam/examDetail?e=${eid}&p=${pid}`)
     }
   }

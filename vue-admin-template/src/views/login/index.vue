@@ -133,7 +133,11 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          const data = {}
+          for (const key in this.loginForm) {
+            data[key] = this.loginForm[key].trim()
+          }
+          this.$store.dispatch('user/login', data).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {

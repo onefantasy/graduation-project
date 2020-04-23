@@ -29,6 +29,7 @@ router.post('/register',async (ctx, next) => {
       message: user ? '创建成功' : '创建失败'
     }
   } catch(err) {
+    console.log('错误：', err)
     if (err.errors && err.errors[0].type === 'unique violation') {
       ctx.body = {
         code: 103,
@@ -66,6 +67,7 @@ router.post('/login', async (ctx, next) => {
     }
   } else {
     // 对密码进行校验，如果密码正确，则返回下面语句
+    await data.update({ latestTime: Date.now() })
     const tag = token.create({account: params.account})
     ctx.body = {
       code: 200,

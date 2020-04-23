@@ -37,7 +37,7 @@
           <el-input v-model="userInfo.number" placeholder="请输入您的学号" />
         </el-form-item>
         <el-form-item label="年龄" prop="age">
-          <el-input v-model="userInfo.age" placeholder="请输入您的年龄" />
+          <el-input v-model.number="userInfo.age" type="number" placeholder="请输入您的年龄" />
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="userInfo.sex" placeholder="请选择">
@@ -50,7 +50,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="userInfo.password" placeholder="请输入密码" type="password" />
+          <el-input v-model="userInfo.password" placeholder="请输入密码" type="password" show-password />
         </el-form-item>
       </el-scrollbar>
       <div class="form-button">
@@ -62,9 +62,11 @@
 </template>
 
 <script>
+import fun from '@/mixin/fun'
 export default {
   name: 'Register',
   components: {},
+  mixins: [fun],
   data() {
     return {
       // 用户信息
@@ -83,16 +85,25 @@ export default {
 
       // 表单验证
       rules: {
-        account: [{ required: true, message: '请输入账号', tigger: 'blur' }],
+        account: [
+          { required: true, message: '请输入账号', tigger: 'blur' },
+          { pattern: /^[a-z0-9A-Z]+$/, message: '只允许存在字母和数数字' }
+        ],
         name: [{ required: true, message: '请输入姓名', tigger: 'blur' }],
         role: [{ required: true, message: '请选择职业', tigger: 'blur' }],
         school: [{ required: true, message: '请输入学校', tigger: 'blur' }],
         major: [{ required: true, message: '请输入专业', tigger: 'blur' }],
         class: [{ required: true, message: '请输入班级', tigger: 'blur' }],
         number: [{ required: true, message: '请输入学号', tigger: 'blur' }],
-        age: [{ required: true, message: '请输入年龄', tigger: 'blur' }],
+        age: [
+          { type: 'number', message: '年龄必须为数字值' },
+          { required: true, type: 'number', message: '请输入年龄', tigger: 'blur' }
+        ],
         sex: [{ required: true, message: '请输入性别', tigger: 'blur' }],
-        password: [{ required: true, message: '请输入密码', tigger: 'blur' }]
+        password: [
+          { required: true, message: '请输入密码', tigger: 'blur' },
+          { pattern: /^[a-z0-9A-Z]+$/, message: '只允许存在字母和数数字' }
+        ]
       },
 
       // 身份选项
@@ -118,10 +129,19 @@ export default {
       // 对表单进行校验
       this.$refs['registerForm'].validate()
         .then(result => {
+          const data = {}
+          // 去除空格
+          for (const key in this.userInfo) {
+            // 顺便将数字转为字符串
+            const value = this.userInfo[key] + ''
+            data[key] = value ? value.trim() : value
+          }
+          this.openLoad()
           //  通过验证
           return this.$store.dispatch('user/register', this.userInfo)
         })
         .then(res => {
+          this.closeLoad()
           if (res.code === 200) {
             this.$message({
               message: '注册成功，快去登录吧',
@@ -133,6 +153,7 @@ export default {
           }
         })
         .catch(err => {
+          this.closeLoad()
           if (err !== false) return false
           // 没通过验证的提示
           this.$message({

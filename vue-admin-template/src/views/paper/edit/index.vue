@@ -147,7 +147,7 @@ export default {
         // 获取该试卷的试卷试题
         this.getPaperQuestions()
       }).catch(() => {
-        this.$message.error('试卷信息获取失败，现在返回试卷列表，请稍后重试')
+        // this.$message.error('试卷信息获取失败，现在返回试卷列表，请稍后重试')
         this.$router.go(-1)
       })
     },

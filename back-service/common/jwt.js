@@ -1,12 +1,14 @@
 // 本文件用于进行token的生成、解析、刷新
 const jwt = require('jsonwebtoken')
 
+// 导入user模块进行ip验证
+const users = require('../model/users')
+
 // token 密钥
 const secret = 'Examination-Online'
 
 // token 存在时间 单位秒
-const expiresIn = 14400
-
+const expiresIn = 4 * 60 * 60
 
 // 生成token 
 const create = (data) => {
@@ -16,13 +18,17 @@ const create = (data) => {
 
 
 // 验证token 
-const analyse = (token,ctx) => {
+const analyse = async (token,ctx) => {
   let flag = false
   jwt.verify(token, secret, {ignoreExpiration:false}, function(err, decoded) {
-    if(!err) {
-      flag = true
+    if(err) {
+      flag = 1
     }
   });
+  const user = await users.findOne({ where: { account: ctx.account } })
+  if (user.origin !== ctx.header.origin) {
+    flag = 2
+  }
   return flag
 }
 

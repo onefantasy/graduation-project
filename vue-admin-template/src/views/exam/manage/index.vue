@@ -156,7 +156,7 @@ export default {
         this.config = res.data.config
         this.getExamOverall()
       }).catch(() => {
-        this.$message.error('试卷信息获取失败，请稍后重试')
+        // this.$message.error('试卷信息获取失败，请稍后重试')
         this.closeLoad()
       })
     },

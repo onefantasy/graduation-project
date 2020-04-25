@@ -67,7 +67,7 @@ router.post('/login', async (ctx, next) => {
     }
   } else {
     // 对密码进行校验，如果密码正确，则返回下面语句
-    await data.update({ latestTime: Date.now() })
+    await data.update({ latestTime: Date.now(), origin: ctx.header.origin })
     const tag = token.create({account: params.account})
     ctx.body = {
       code: 200,

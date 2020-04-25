@@ -79,10 +79,15 @@ app.use(async (ctx, next) => {
 const notAnalyse = ['/users/login','/users/logout','/users/register']	// 不用进行token验证的请求
 app.use(async (ctx,next) => {  
   if(!!ctx.header['x-token']) token.decoded(ctx.header['x-token'], ctx)
-  if(notAnalyse.indexOf(ctx.url) === -1 && !token.analyse(ctx.header['x-token'],ctx)){
+  let flag = false
+  const errMsg = ['', '登陆验证失败，请重新登陆！', '账号已在异地登陆，请重新登陆！']
+  if (notAnalyse.indexOf(ctx.url) === -1) {
+    flag = await token.analyse(ctx.header['x-token'], ctx)
+  }
+  if(flag){
     ctx.body = {
       code: 508,
-      message: '登陆超时，请重新登陆！'
+      message: errMsg[flag]
     }
   } else {
     await next()

@@ -167,6 +167,10 @@ export default {
       this.currentQuestion.content = this.questions[arr[0]][arr[1]] || {}
       // 更改子组件的存储类型和存储格式
       this.$refs['questionEditor'].changeQuestionInfo(this.currentQuestion)
+      // 返回顶部
+      setTimeout(() => {
+        this.$refs['backToTop'].backToTop()
+      }, 200)
     },
     // 初始化试卷存储对象
     initQuestions(record) {

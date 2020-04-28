@@ -1,11 +1,11 @@
 <template>
-  <el-scrollbar class="app-main-scrollbar">
-    <section class="app-main">
-      <transition name="fade-transform" mode="out-in">
-        <router-view :key="key" />
-      </transition>
-    </section>
-  </el-scrollbar>
+  <!-- <el-scrollbar class="app-main-scrollbar"> -->
+  <section class="app-main">
+    <transition name="fade-transform" mode="out-in">
+      <router-view :key="key" />
+    </transition>
+  </section>
+  <!-- </el-scrollbar> -->
 </template>
 
 <script>
@@ -28,7 +28,7 @@ export default {
   overflow: hidden;
 }
 .fixed-header+.app-main {
-  padding-top: 50px;
+  padding-top: 84px;
 }
 </style>
 
@@ -39,14 +39,14 @@ export default {
     padding-right: 15px;
   }
 }
-.app-main-scrollbar {
-  position: absolute;;
-  top: 84px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  >.el-scrollbar__wrap{
-    overflow-x: hidden;
-  }
-}
+// .app-main-scrollbar {
+//   position: absolute;;
+//   top: 84px;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   >.el-scrollbar__wrap{
+//     overflow-x: hidden;
+//   }
+// }
 </style>

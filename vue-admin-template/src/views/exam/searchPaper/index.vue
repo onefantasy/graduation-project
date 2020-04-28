@@ -106,7 +106,7 @@ export default {
         this.computeTypeArray()
         setTimeout(() => { this.activeName = ['1'] }, 100)
       }).catch(() => {
-        this.$message.error('此试卷不存在或者尚未发布！')
+        // this.$message.error('此试卷不存在或者尚未发布！')
       }).finally(() => {
         loading.close()
       })

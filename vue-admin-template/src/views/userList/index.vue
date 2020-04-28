@@ -183,6 +183,7 @@ export default {
     },
     // 搜索
     search() {
+      this.page = 1
       this.getUserList()
     },
     // 修改密码

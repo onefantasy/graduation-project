@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      visible: false,
+      visible: true,
       interval: null,
       isMoving: false
     }
@@ -55,7 +55,8 @@ export default {
   },
   methods: {
     handleScroll() {
-      this.visible = window.pageYOffset > this.visibilityHeight
+      // this.visible = window.pageYOffset > this.visibilityHeight
+      this.visible = true
     },
     backToTop(top = 0) {
       if (this.isMoving) return

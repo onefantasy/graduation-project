@@ -143,16 +143,17 @@ export default {
     },
     // 搜索
     search() {
+      this.page = 1
       this.getExamedPaper()
     },
     // 每页显示数量发生改变
     handleSizeChange(e) {
-      this.searchKeys.pageSize = e
+      this.pageSize = e
       this.getExamedPaper()
     },
     // 页码发生改变
     handleCurrentChange(e) {
-      this.searchKeys.page = e
+      this.page = e
       this.getExamedPaper()
     },
     // 显示当前得分

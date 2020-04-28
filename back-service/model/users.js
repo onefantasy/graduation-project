@@ -1,7 +1,7 @@
 // 用户信息记录表
 const sequelize = require('../sequelize')
 const Sequelize = require('sequelize')
-//引入bcryptjs 对密码进行加密解密
+// 引入bcryptjs 对密码进行加密解密
 const bcrypt = require('bcryptjs');
 
 const users = sequelize.define('users', {

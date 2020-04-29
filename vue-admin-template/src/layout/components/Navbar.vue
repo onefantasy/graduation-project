@@ -53,12 +53,16 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      if (this.$route.path === '/exam/examination') {
+        this.$message.warning('请先退出考试页面，再执行退出登陆的操作！')
+        return false
+      }
+      // 清空固钉
+      this.$store.state.tagsView.visitedViews = []
       await this.$store.dispatch('user/logout')
       // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       // 取消重定向
       this.$router.push(`/login`)
-      // 清空固钉
-      this.$store.state.tagsView.visitedViews = []
     }
   }
 }

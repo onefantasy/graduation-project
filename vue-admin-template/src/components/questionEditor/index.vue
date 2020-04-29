@@ -185,13 +185,21 @@ export default {
     },
     // 获取已填写的试题信息（主要给父组件使用）
     getQuestionInfo() {
+      if (!this.question.content) return ''
       // 调用该函数时，表示试题信息已经保存
       this.isSaved = true
+      // 问答题转换处理
       if (this.question.type === 'essays') {
         this.question.content.rightKey = this.question.content.rightKey.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
       }
+      // 填空题的处理
+      if (this.question.type === 'completions') {
+        // 对填空题的答案进心处理，如果存在多余的空格，则去除多余的空格，保证每个答案之间都只有一个空格
+        this.question.content.rightKey = this.question.content.rightKey.trim().split(' ').filter(item => item !== '').join(' ')
+      }
       if (['singles', 'multiples'].indexOf(this.question.type) !== -1) {
-        this.question.content.rightKey = this.question.content.rightKey.trim().split('').sort().join('').toLocaleUpperCase()
+        // 对选择题的答案进行去除空格改为大写，截割成数组进行排序之后再转换为字符串
+        this.question.content.rightKey = this.question.content.rightKey.trim().toLocaleUpperCase().split('').sort().join('')
       }
       return this.question.content
     },

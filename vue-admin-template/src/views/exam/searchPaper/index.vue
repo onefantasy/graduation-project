@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       // 用于查询的试卷编号
-      paperId: 'p1585235112914',
+      paperId: 'p1585060038319',
 
       // 搜索获得的试卷信息
       paperInfo: {},
@@ -130,19 +130,19 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const data = {
-          paperId: this.paperInfo.paperId,
-          account: this.$store.getters.userInfo.account,
-          startExam: this.$moment().format('YYYY-MM-DD HH:mm:ss'),
-          paperTitle: this.paperInfo.paperTitle,
-          subject: this.paperInfo.subject
-        }
-        return this.$store.dispatch('exam/startExam', data)
-      }).then(res => {
-        this.$store.commit('user/SET_TOKEN', res.token)
-        this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
+      //   const data = {
+      //     paperId: this.paperInfo.paperId,
+      //     account: this.$store.getters.userInfo.account,
+      //     startExam: this.$moment().format('YYYY-MM-DD HH:mm:ss'),
+      //     paperTitle: this.paperInfo.paperTitle,
+      //     subject: this.paperInfo.subject
+      //   }
+      //   return this.$store.dispatch('exam/startExam', data)
+      // }).then(res => {
+      //   this.$store.commit('user/SET_TOKEN', res.token)
+      //   this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=${res.data.eid}`)
         // 测试用的eid e1585548598871
-        // this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1586180781209`)
+        this.$router.push(`/exam/examination?paperId=${this.paperInfo.paperId}&e=e1587628114562`)
       }).catch(() => {})
     }
   }

@@ -55,6 +55,8 @@
 
 <script>
 import { grading } from '@/utils/grade'
+// 屏蔽快捷键函数
+import { hideKeyDown } from '@/utils/keyDown'
 import screenfull from '@/components/Screenfull'
 import question from '../children/question'
 import timer from '../children/timer'
@@ -130,14 +132,27 @@ export default {
     this.getPaperDetail()
   },
   mounted() {
+    const _this = this
     if (!this.$refs['screenfull'].isFullscreen) {
       // 如果不是全屏，则开启全屏模式
       this.$refs['screenfull'].click()
+    }
+    // 屏蔽键盘事件
+    document.onkeydown = hideKeyDown
+    // this.$refs['examination'].onkeydown = hideKeyDown
+    // 屏蔽鼠标右键
+    document.oncontextmenu = function() {
+      _this.$message.warning('禁止使用鼠标右键菜单！')
+      event.returnValue = false
     }
   },
   // 路由跳转控制
   async beforeRouteLeave(to, from, next) {
     if (this.isSubmitted) {
+      // 检出屏蔽键盘事件
+      document.onkeydown = function() {}
+      // 解除屏蔽鼠标右键事件
+      document.oncontextmenu = function() {}
       // 已经交卷完成，直接进行跳转
       next()
     } else {
@@ -359,6 +374,11 @@ export default {
 <style lang="scss" scoped>
 .examination-box {
   padding: 20px;
+  -moz-user-select:none; /*火狐*/
+  -webkit-user-select:none; /*webkit浏览器*/
+  -ms-user-select:none; /*IE10*/
+  -khtml-user-select:none; /*早期浏览器*/
+  user-select:none;
 
   .flex-box {
     display: flex;

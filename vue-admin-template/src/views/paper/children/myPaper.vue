@@ -201,6 +201,11 @@ export default {
     },
     // 跳转到编辑试卷页面
     goEdit(row) {
+      const { singles, multiples, judges, completions, essays } = { ...row }
+      if (!singles && !multiples && !judges && !completions && !essays) {
+        this.$message.warning('请先设定题目数量，在进行编辑！')
+        return false
+      }
       this.$router.push('/paper/edit/' + row.paperId)
     },
     // 修改试卷配置

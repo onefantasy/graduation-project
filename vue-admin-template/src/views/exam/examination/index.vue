@@ -139,9 +139,8 @@ export default {
     }
     // 屏蔽键盘事件
     document.onkeydown = hideKeyDown
-    // this.$refs['examination'].onkeydown = hideKeyDown
     // 屏蔽鼠标右键
-    document.oncontextmenu = function() {
+    document.oncontextmenu = function(event) {
       _this.$message.warning('禁止使用鼠标右键菜单！')
       event.returnValue = false
     }

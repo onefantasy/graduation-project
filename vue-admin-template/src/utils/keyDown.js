@@ -9,7 +9,7 @@ export function hideKeyDown(event) {
       (event.keyCode === 39))) { // 屏蔽 Alt+ 方向键 →
     Message({
       type: 'warning',
-      message: '禁止前进后退网页的操作！'
+      message: '此页面禁止前进后退网页的操作！'
     })
     event.returnValue = false
   }
@@ -19,7 +19,7 @@ export function hideKeyDown(event) {
       (event.ctrlKey && event.keyCode === 82)) { // Ctrl + R
     Message({
       type: 'warning',
-      message: '禁止刷新该页面！'
+      message: '此页面禁止刷新该页面！'
     })
     event.returnValue = false
   }
@@ -27,7 +27,7 @@ export function hideKeyDown(event) {
   if ((event.ctrlKey) && (event.keyCode === 78)) {
     Message({
       type: 'warning',
-      message: '禁止使用该快捷方式打开新窗口！'
+      message: '此页面禁止使用该快捷方式打开新窗口！'
     })
     event.returnValue = false
   }
@@ -35,7 +35,7 @@ export function hideKeyDown(event) {
   if ((event.altKey) && (event.keyCode === 115)) {
     Message({
       type: 'warning',
-      message: '禁止使用该快捷方式关闭当前窗口！'
+      message: '此页面禁止使用该快捷方式关闭当前窗口！'
     })
     return false
   }
@@ -43,8 +43,18 @@ export function hideKeyDown(event) {
   if (event.ctrlKey && event.keyCode === 87) {
     Message({
       type: 'warning',
-      message: '禁止关闭该页面！'
+      message: '此页面禁止关闭该页面！'
     })
+    return false
+  }
+  // 禁用esc键
+  if (event.keyCode === 27) {
+    Message({
+      type: 'warning',
+      message: '此页面禁用esc键！'
+    })
+    event.keyCode = 0
+    event.returnValue = false
     return false
   }
   // alt + tab切换窗口: 系统级快捷键，无法进行屏蔽

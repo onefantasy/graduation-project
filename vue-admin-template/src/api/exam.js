@@ -53,3 +53,12 @@ export function changeScore(data) {
     data
   })
 }
+
+// 教师删除学生考试记录
+export function deleteExamRecord(data) {
+  return request({
+    url: '/exam/deleteExamRecord',
+    method: 'post',
+    data
+  })
+}

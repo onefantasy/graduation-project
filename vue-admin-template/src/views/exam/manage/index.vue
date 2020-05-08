@@ -41,7 +41,7 @@
           </el-tab-pane>
           <el-tab-pane>
             <span slot="label"><i class="el-icon-s-grid" /> 表格</span>
-            <rank-table :table-data="overall" />
+            <rank-table :paper-id="paperId" :paper-title="config.paperTitle" :table-data="overall" @deleteRecorded="deleteRecorded" />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -57,6 +57,7 @@ import pieChart from '../children/pieChart'
 import barChart from '../children/barChart'
 import rankTable from '../children/rankTable'
 import rankChart from '../children/rankChart'
+
 export default {
   components: {
     MDinput,
@@ -72,7 +73,7 @@ export default {
       load: null,
 
       // 搜索用的试卷id
-      paperId: 'p1585235112914',
+      paperId: 'p1585060038319',
 
       // 所有的考试记录
       overall: '',
@@ -213,9 +214,9 @@ export default {
       }
       // 记录数据
       this.recordArr[0] = l || 0 // 考试人数
-      this.recordArr[1] = this.overall[0].scoreExam || 0 // 考试最高分
-      this.recordArr[2] = totalScore / l || 0 // 平均分
-      this.recordArr[3] = this.formatSecondToTime(parseInt(totalTime / l)) || 0 // 平均用时
+      this.recordArr[1] = this.overall[0] ? this.overall[0].scoreExam || 0 : 0 // 考试最高分
+      this.recordArr[2] = l ? totalScore / l || 0 : 0 // 平均分
+      this.recordArr[3] = l ? this.formatSecondToTime(parseInt(totalTime / l)) || [0, 0, 0] : [0, 0, 0] // 平均用时
       // 每种题型的分数处理
       for (let i = 0, len = this.types.length; i < len; i++) {
         this.types[i] = this.types[i].name
@@ -275,6 +276,13 @@ export default {
     // 跳转到批改试卷页面
     goMark() {
       this.$router.push('/exam/mark?p=' + this.paperId)
+    },
+    // 删除考试记录成功之后
+    deleteRecorded(paperId) {
+      console.log('删除之后的paperId:', paperId)
+      this.reset()
+      this.paperId = paperId
+      this.search()
     }
   }
 }

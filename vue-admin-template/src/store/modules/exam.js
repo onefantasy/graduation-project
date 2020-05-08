@@ -4,7 +4,8 @@ import {
   getExamedPaper,
   getExamRecordByAP,
   getExamOverallByPid,
-  changeScore
+  changeScore,
+  deleteExamRecord
 } from '@/api/exam'
 
 const actions = {
@@ -41,6 +42,12 @@ const actions = {
   // 更改分数
   async changeScore(ctx, data) {
     const res = await changeScore(data)
+    return res
+  },
+
+  // 教师删除学生考试记录
+  async deleteExamRecord(ctx, data) {
+    const res = await deleteExamRecord(data)
     return res
   }
 }

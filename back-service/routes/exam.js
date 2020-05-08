@@ -260,4 +260,38 @@ router.post('/changeScore', async (ctx, next) => {
   }
 })
 
+// 删除考试记录
+router.post('/deleteExamRecord', async (ctx, next) => {
+  const params = ctx.request.body
+  const paper = await papers.findOne({ where: { paperId: params.paperId } })
+  if (!paper) {
+    ctx.body = {
+      code: 404,
+      message: '试卷不存在，无法进行操作！'
+    }
+    return false
+  }
+  if (paper.account !== ctx.account) {
+    ctx.body = {
+      code: 103,
+      message: '本账号无权进行此操作！'
+    }
+    return false
+  }
+  const where = { eid: params.eid, paperId: params.paperId }
+  const aRes = await answers.destroy({ where })
+  if (!aRes) {
+    ctx.body = {
+      code: 500,
+      message: '删除答题记录失败！'
+    }
+    return false
+  }
+  const eRes = await exam.destroy({ where })
+  ctx.body = {
+    code: eRes ? 200 : 500,
+    message: eRes ? '删除成功！' : '删除失败！'
+  }
+})
+
 module.exports = router

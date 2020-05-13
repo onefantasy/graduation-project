@@ -304,6 +304,17 @@ export const asyncRoutes = [
     }]
   },
 
+  {
+    path: '/paperList',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'paperList',
+      component: () => import('@/views/paperList/index'),
+      meta: { title: '试卷列表', icon: 'form', roles: ['admin'] }
+    }]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

@@ -52,3 +52,12 @@ export function getPapersAllCount() {
     method: 'get'
   })
 }
+
+// 管理员：获取试卷列表
+export function getAdminPaperList(data) {
+  return request({
+    url: '/paper/adminPapers',
+    method: 'post',
+    data
+  })
+}

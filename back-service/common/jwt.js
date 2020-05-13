@@ -29,6 +29,7 @@ const analyse = async (token,ctx) => {
   if (user.origin !== ctx.header.origin) {
     flag = 2
   }
+  ctx.admin = user.role === 'admin'
   return flag
 }
 

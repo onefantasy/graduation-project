@@ -128,7 +128,11 @@ router.get('/getPaperDetail', async (ctx, next) => {
 // 改变试卷的发布状态
 router.post('/changePublish', async (ctx, next) => {
   const params = ctx.request.body
-  const res = await papers.update({ publish: !params.publish }, { where: { paperId: params.paperId, account: ctx.account } })
+  const where = { paperId: params.paperId }
+  if (!ctx.admin) {
+    where.account = ctx.account
+  }
+  const res = await papers.update({ publish: !params.publish }, { where })
   ctx.body = {
     code: res ? 200 : 103,
     message: res ? '更改成功' : '更改失败'
@@ -154,6 +158,47 @@ router.get('/getPapersAllCount', async (ctx, next) => {
     code: data ? 200 : 103,
     message: data ? '查询成功' : '查询失败',
     data
+  }
+})
+
+// 管理员：获取试卷列表信息
+router.post('/adminPapers', async (ctx, next) => {
+  if (!ctx.admin) {
+    ctx.body = {
+      code: 500,
+      message: '无此权限！'
+    }
+    return false
+  }
+  const params = ctx.request.body
+  let where = {}
+  if (params.name) {
+    where.name = { [Op.substring]: params.name }
+    const data = await users.findAll({ where })
+    where = {}
+    data && (where.account = { [Op.or]: data.map(item => item.account) })
+  }
+  typeof params.publish === 'boolean' && (where.publish = params.publish)
+  params.paperId && (where.paperId = { [Op.substring]: params.paperId })
+  params.paperTitle && (where.paperTitle = { [Op.substring]: params.paperTitle })
+  papers.belongsTo(users, { foreignKey: 'account' })
+  const { rows: data, count: total } = await papers.findAndCountAll({
+    where,
+    offset: (+params.page - 1) * +params.pageSize,
+    limit: +params.pageSize,
+    include: {
+      model: users,
+      attributes: ['name', 'school', 'number']
+    },
+    order: [
+      ['createdAt', 'DESC']
+    ]
+  })
+  ctx.body = {
+    code: data ? 200 : 103,
+    message: data ? '查询成功！' : '查询失败！',
+    data,
+    total
   }
 })
 

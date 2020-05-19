@@ -40,11 +40,18 @@ export default {
       default: 100
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+  watch: {
+    'chartData': {
+      handler() {
+        this.$nextTick(() => {
+          this.initChart()
+        })
+      },
+      deep: true,
+      immediate: true
+    }
   },
+  mounted() {},
   methods: {
     // 初始化图标
     initChart() {

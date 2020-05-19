@@ -15,6 +15,14 @@
         <!-- 返回与改卷按钮 开始 -->
         <div>
           <el-button icon="el-icon-d-arrow-left" @click="reset">返回搜索</el-button>
+          <el-select v-model="classOption" placeholder="班级" @change="changeClass">
+            <el-option
+              v-for="item in classes"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
           <el-button style="float: right;" type="primary" @click="goMark">批卷 <i class="el-icon-d-arrow-right" /></el-button>
         </div>
         <!-- 返回与改卷按钮 结束 -->
@@ -41,7 +49,7 @@
           </el-tab-pane>
           <el-tab-pane>
             <span slot="label"><i class="el-icon-s-grid" /> 表格</span>
-            <rank-table :paper-id="paperId" :paper-title="config.paperTitle" :table-data="overall" @deleteRecorded="deleteRecorded" />
+            <rank-table :paper-id="paperId" :paper-title="config.paperTitle" :table-data="overall" :class-name="classOption" @deleteRecorded="deleteRecorded" />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -77,6 +85,9 @@ export default {
 
       // 所有的考试记录
       overall: '',
+
+      // 全部考试记录的备份
+      backup: '',
 
       // 试卷配置
       config: '',
@@ -114,12 +125,25 @@ export default {
         judges: [], // 判断题得分
         completions: [], // 填空题得分
         essays: [] // 问答题得分
-      }
+      },
+
+      // 班级：全部
+      allClass: '全部',
+
+      // 班级选项
+      classes: [],
+
+      // 当前展示的班级
+      classOption: ''
     }
   },
   created() {
     // 从仓库获取所有的题型
     this.questionTypes = this.$store.getters.constant.question.types
+    // 班级选项默认加入 全部 这个选项
+    this.classes.push(this.allClass)
+    // 默认展示全部的班级
+    this.classOption = this.allClass
   },
   methods: {
     // 开启遮罩
@@ -138,8 +162,11 @@ export default {
       }
       // 发起请求
       this.$store.dispatch('exam/getExamOverallByPid', params).then(res => {
+        this.backup = res.data
         this.overall = res.data
         this.examNumber = this.overall.length
+        // 生成班级选项
+        this.createClasses()
         // 统计数据
         this.statistics()
       }).finally(() => {
@@ -272,6 +299,12 @@ export default {
         completions: [], // 填空题得分
         essays: [] // 问答题得分
       }
+
+      this.classes = []
+      // 班级选项默认加入 全部 这个选项
+      this.classes.push(this.allClass)
+      // 默认展示全部的班级
+      this.classOption = this.allClass
     },
     // 跳转到批改试卷页面
     goMark() {
@@ -279,10 +312,59 @@ export default {
     },
     // 删除考试记录成功之后
     deleteRecorded(paperId) {
-      console.log('删除之后的paperId:', paperId)
+      // console.log('删除之后的paperId:', paperId)
       this.reset()
       this.paperId = paperId
       this.search()
+    },
+    // 生成班级选项
+    createClasses() {
+      for (let i = 0, l = this.backup.length; i < l; i++) {
+        const str = this.backup[i].user.class
+        this.classes.indexOf(str) === -1 && this.classes.push(str)
+      }
+    },
+    // 更改班级选项
+    changeClass(e) {
+      this.overall = ''
+      if (e === this.allClass) {
+        this.overall = this.backup
+      } else {
+        this.overall = this.backup.filter(item => item.user.class === e)
+      }
+      this.openLoad()
+      // 数据重置 开始
+
+      // 分数各个等级的人数
+      this.scoreLevelPeople = []
+
+      // 考试记录的数量
+      this.examNumber = this.overall.length
+
+      // 记录数组【考试人数，最高分，平均分，平均用时[时，分，秒]】
+      this.recordArr = [0, 0, 0, [0, 0, 0]]
+
+      // 存储改试卷题型的数组
+      this.types = []
+
+      // 每种题型的平均分数组
+      this.typeScore = []
+
+      // 每位考生的统计数据
+      this.examinee = {
+        name: [], // 考生名字
+        total: [], // 总得分
+        singles: [], // 单选题得分
+        multiples: [], // 多选题得分
+        judges: [], // 判断题得分
+        completions: [], // 填空题得分
+        essays: [] // 问答题得分
+      }
+
+      // 数据重置 结束
+      // 统计数据
+      this.statistics()
+      this.closeLoad()
     }
   }
 }

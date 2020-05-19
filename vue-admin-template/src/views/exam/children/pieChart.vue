@@ -59,11 +59,7 @@ export default {
       immediate: true
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
-  },
+  mounted() {},
   beforeDestroy() {
     if (!this.chart) {
       return
@@ -103,12 +99,17 @@ export default {
     },
     // 生成渲染格式的数据
     formatData() {
+      this.showData = []
       for (let i = 0, l = this.chartDataName.length; i < l; i++) {
         this.showData.push({
           value: this.chartData[i],
           name: this.chartDataName[i]
         })
       }
+      // 执行喧嚷
+      this.$nextTick(() => {
+        this.initChart()
+      })
     }
   }
 }

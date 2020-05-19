@@ -71,6 +71,11 @@ export default {
     paperTitle: {
       type: String,
       default: '默认标题'
+    },
+    // 班级
+    className: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -115,6 +120,7 @@ export default {
       import('@/vendor/Export2Excel').then(excel => {
         // excel表头
         const tHeader = [
+          '名次',
           '姓名',
           '学校',
           '专业',
@@ -132,6 +138,7 @@ export default {
         ]
         // 数据项
         const filterVal = [
+          'rank',
           'user.name',
           'user.school',
           'user.major',
@@ -151,11 +158,13 @@ export default {
         const list = this.tableData
         // 格式化数据
         const data = this.formatJson(filterVal, list)
+        // 生成的文件名
+        const filename = this.paperTitle + this.className + '班级成绩单'
         // 到处操作
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: this.paperTitle,
+          filename,
           bookType: 'xlsx'
         })
         this.downloadLoading = false
@@ -163,9 +172,11 @@ export default {
     },
     // 格式化表格数据
     formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => {
+      return jsonData.map((v, index) => filterVal.map(j => {
         if (j === 'timestamp') {
           return parseTime(v[j])
+        } else if (j === 'rank') {
+          return index + 1
         } else if (j.indexOf('.') !== -1) {
           const arr = j.split('.')
           let res = v

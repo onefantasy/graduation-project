@@ -39,7 +39,7 @@ export default {
     },
     tooltipName: {
       type: String,
-      default: '数据'
+      default: '平均分'
     }
   },
   watch: {
@@ -61,6 +61,12 @@ export default {
       this.chart.setOption({
         title: {
           text: this.title
+        },
+        tooltip: {
+          trigger: 'item',
+          axisPointer: {
+            type: 'cross'
+          }
         },
         yAxis: {
           type: 'category',

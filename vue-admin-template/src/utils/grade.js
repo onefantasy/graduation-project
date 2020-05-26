@@ -7,6 +7,7 @@
  *
  */
 export function grading(rightArr, mineArr) {
+  // console.log('开始评分：', Date.now())
   // 删除考生答案中每个数组的第一个元素，因为序号的问题，导致第一个元素其实不存在
   for (const key in mineArr) {
     mineArr[key].shift()
@@ -64,6 +65,8 @@ export function grading(rightArr, mineArr) {
     }
     answerArr = answerArr.concat(target)
   }
+
+  // console.log('结束评分：', Date.now())
 
   return { score, answerArr }
 }

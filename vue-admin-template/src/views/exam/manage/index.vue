@@ -27,6 +27,8 @@
         </div>
         <!-- 返回与改卷按钮 结束 -->
 
+        <h2 class="paper-title">{{ config.paperTitle }}统计结果</h2>
+
         <panel-group :show-arr="recordArr" />
 
         <el-row :gutter="32">
@@ -128,7 +130,7 @@ export default {
       },
 
       // 班级：全部
-      allClass: '全部',
+      allClass: '全部班级',
 
       // 班级选项
       classes: [],
@@ -200,6 +202,7 @@ export default {
     },
     // 统计数据
     statistics() {
+      console.log('开始统计：', Date.now())
       // 统计总分，最后用于计算平均分
       let totalScore = 0
       // 统计总用时，最后用于计算平均时间
@@ -222,7 +225,9 @@ export default {
       }
       // 便利循环处理
       for (let i = 0; i < l; i++) {
+        // 总分
         totalScore += +this.overall[i].scoreExam
+        // 总时间
         totalTime += this.formatTimeToSecond(this.overall[i].timeExam)
         // 分数等级统计
         let level = parseInt(+this.overall[i].scoreExam / step)
@@ -249,6 +254,7 @@ export default {
         this.types[i] = this.types[i].name
         this.typeScore[i] = this.typeScore[i] / l || 0
       }
+      console.log('结束统计：', Date.now())
     },
     // 将字符串时间转换为秒数
     formatTimeToSecond(time) {
@@ -397,6 +403,10 @@ export default {
     background: #fff;
     padding: 16px 16px 0;
     margin-bottom: 32px;
+  }
+
+  .paper-title {
+    text-align: center;
   }
 }
 .backgroundGray {

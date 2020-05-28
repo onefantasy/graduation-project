@@ -45,7 +45,7 @@
         <!-- 填空题 结束 -->
         <!-- 问答题 开始 -->
         <div v-else style="flex: 1">
-          <el-input v-model="textarea" type="textarea" autosize show-word-limit @input="changeTextarea" />
+          <el-input v-model="textarea" type="textarea" autosize :show-word-limit="true" @input="changeTextarea" />
         </div>
         <!-- 问答题 结束 -->
       </div>
@@ -177,7 +177,7 @@ export default {
 .question {
   .issues {
     img {
-      width: 100%;
+      width: 200px;
     }
   }
 }

@@ -150,11 +150,15 @@ export default {
   methods: {
     // 开启遮罩
     openLoad() {
-      this.load = this.$loading({ target: this.$refs['manegeBox'] })
+      if (!this.load)
+        this.load = this.$loading({ target: this.$refs['manegeBox'] })
     },
     // 关闭遮罩
     closeLoad() {
-      if (this.load) this.load.close()
+      if (this.load) {
+        this.load.close()
+        this.load = null
+      }
     },
     // 根据paperId获取某张试卷的考试整体情况（教师专用接口，用于统计考试情况）
     getExamOverall() {

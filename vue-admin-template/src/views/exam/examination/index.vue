@@ -21,7 +21,7 @@
           <el-menu style="border: 0;" :default-active="currentQuestionIndex" :unique-opened="true" @select="selectMenuItem">
             <el-submenu v-for="item of questionList" :key="item.index" :index="item.index">
               <template slot="title"><i class="el-icon-s-promotion" />{{ `${ item.index }、${ item.name }(${ config[item.type + 'Score'] }分)` }}</template>
-              <el-menu-item v-for="unit of item.number" :key="unit" :index="`${ item.type }-${ unit }`">题目{{ unit }}</el-menu-item>
+              <el-menu-item v-for="unit of item.number" :key="unit" :index="`${ item.type }-${ unit }`">题目{{ unit }}({{ questions[item.type][unit].score }}分)</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-scrollbar>

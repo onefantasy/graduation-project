@@ -118,6 +118,7 @@ export default {
     // 取消更改表单
     resetForm() {
       this.userInfo = this.deepCopy(this.$store.getters.userInfo)
+      this.userInfo.sex = +this.userInfo.sex
     }
   }
 }

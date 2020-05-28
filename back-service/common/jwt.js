@@ -26,9 +26,9 @@ const analyse = async (token,ctx) => {
     }
   });
   const user = await users.findOne({ where: { account: ctx.account } })
-  if (user.origin !== ctx.header.origin) {
-    flag = 2
-  }
+  // if (user.origin !== (ctx.header.origin || ctx.header.Host)) {
+  //   flag = 2
+  // }
   ctx.admin = user.role === 'admin'
   return flag
 }

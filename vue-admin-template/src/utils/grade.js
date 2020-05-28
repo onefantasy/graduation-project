@@ -74,6 +74,7 @@ export function grading(rightArr, mineArr) {
 // 单选题评分
 // 多选题评分
 // 判断题评分
+// 填空题评分
 function grade(type, rightArr, mineArr) {
   // 答题记录的数组
   const res = { arr: [], score: 0 }

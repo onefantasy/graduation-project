@@ -9,7 +9,7 @@ const questions = {
   completions: require('../model/completions'),
   essays: require('../model/essays')
 }
-// const Op = require('sequelize').Op
+const Op = require('sequelize').Op
 
 router.prefix('/question')
 
@@ -83,7 +83,12 @@ router.get('/getPaperQuestions', async (ctx, next) => {
 router.get('/getCollecQuestions', async (ctx, next) => {
   const params = ctx.query
   const account = ctx.account
-  const where = { account, state: params.state }
+  const where = { account }
+  const keys = Object.keys(params)
+  keys.map(item => {
+    if (item !== 'type')
+      params[item] && (where[item] = { [Op.substring]: params[item] })
+  })
   const { rows: data, count: total } = await questions[params.type].findAndCountAll({
     where,
     order: [

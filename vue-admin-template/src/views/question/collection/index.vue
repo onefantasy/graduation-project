@@ -14,7 +14,7 @@
       </el-form-item>
     </el-form> -->
     <div class="search-box">
-      <el-select v-model="type" placeholder="请选择" @change="getCollecQuestions">
+      <el-select v-model="type" placeholder="请选择">
         <el-option
           v-for="item in questionTypes"
           :key="item.type"
@@ -22,6 +22,10 @@
           :value="item.type"
         />
       </el-select>
+      <el-input v-model="serchKey.title" placeholder="标题" clearable />
+      <el-input v-model="serchKey.from" placeholder="来源" clearable />
+      <el-input v-model="serchKey.auth" placeholder="作者" clearable />
+      <el-button icon="el-icon-search" class="fr" @click.stop="getCollecQuestions" />
     </div>
     <!-- 选择题目类型 结束 -->
 
@@ -89,7 +93,14 @@ export default {
       type: '',
 
       // 所有的题目类型
-      questionTypes: []
+      questionTypes: [],
+
+      // 查询字段
+      serchKey: {
+        title: '', // 标题
+        from: '', // 来源
+        auth: '' // 作者
+      }
     }
   },
   created() {
@@ -109,7 +120,8 @@ export default {
       // 参数
       const params = {
         state: this.$store.getters.constant.question.state.collection,
-        type: this.type
+        type: this.type,
+        ...this.serchKey
       }
       // 发起请求
       this.$store.dispatch('question/getCollecQuestions', params).then(res => {
@@ -167,6 +179,14 @@ export default {
     padding: 5px;
     border: 1px solid #D3D6DC;
     border-radius: 5px;
+
+    .el-input {
+      width: 250px;
+      margin-left: 5px;
+    }
+  }
+  .fr {
+    float: right;
   }
 }
 .demo-table-expand {

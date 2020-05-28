@@ -5,6 +5,8 @@ import { getToken } from '@/utils/auth'
 
 const timeout = 5000
 
+axios.defaults.withCredentials = true
+
 // // 请求遮罩 开始
 // let load = null
 // function closeLoad() {

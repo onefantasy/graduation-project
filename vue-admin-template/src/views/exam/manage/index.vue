@@ -150,8 +150,9 @@ export default {
   methods: {
     // 开启遮罩
     openLoad() {
-      if (!this.load)
+      if (!this.load) {
         this.load = this.$loading({ target: this.$refs['manegeBox'] })
+      }
     },
     // 关闭遮罩
     closeLoad() {
